@@ -4,6 +4,7 @@ import mayacomms.mayaFromMayaPy
 import mayacomms.mayaPyExecutableName
 
 import com.intellij.openapi.components.*
+import com.intellij.openapi.projectRoots.Sdk
 import com.jetbrains.python.sdk.PythonSdkUtil
 import java.util.*
 
@@ -19,6 +20,9 @@ class ApplicationSettings : PersistentStateComponent<ApplicationSettings.State> 
     data class SdkInfo(var mayaPyPath: String = "", var port: Int = -1) {
         val mayaPath: String
             get() = mayaFromMayaPy(mayaPyPath) ?: ""
+
+        val sdk: Sdk?
+            get() = INSTANCE.findByPath(mayaPyPath)
     }
 
     data class State(var mayaSdkMapping: SdkPortMap = mutableMapOf())
@@ -33,12 +37,21 @@ class ApplicationSettings : PersistentStateComponent<ApplicationSettings.State> 
     init {
         val mayaSdk =
             PythonSdkUtil.getAllLocalCPythons().filter { it.homePath?.endsWith(mayaPyExecutableName) ?: false }
-        val homePaths = mayaSdk.map { it.homePath!! }
 
-        for (path in homePaths) {
+        for (sdk in mayaSdk) {
+            val path = sdk.homePath!!
             mayaSdkMapping[path] = SdkInfo(path, -1)
         }
         assignEmptyPorts()
+    }
+
+    fun findByPath(path: String): Sdk? {
+        for (sdk in PythonSdkUtil.getAllSdks()) {
+            if (sdk.homePath.equals(path)) {
+                return sdk
+            }
+        }
+        return null
     }
 
     var mayaSdkMapping: SdkPortMap
@@ -54,11 +67,11 @@ class ApplicationSettings : PersistentStateComponent<ApplicationSettings.State> 
     override fun loadState(state: State) {
         val mayaPySdks =
             PythonSdkUtil.getAllLocalCPythons().filter { x -> x.homePath?.endsWith(mayaPyExecutableName) ?: false }
-        val homePaths = mayaPySdks.map { it.homePath!! }
 
         mayaSdkMapping.clear()
 
-        for (path in homePaths) {
+        for (sdk in mayaPySdks) {
+            val path = sdk.homePath!!
             if (state.mayaSdkMapping.containsKey(path)) {
                 mayaSdkMapping[path] = state.mayaSdkMapping[path]!!
                 continue
@@ -82,8 +95,11 @@ class ApplicationSettings : PersistentStateComponent<ApplicationSettings.State> 
             mayaSdkMapping.remove(path)
         }
 
-        for (path in toAdd) {
-            mayaSdkMapping[path] = SdkInfo(path, -1)
+        for (sdk in mayaSdk) {
+            val path = sdk.homePath!!
+            if (path in toAdd) {
+                mayaSdkMapping[path] = SdkInfo(path, -1)
+            }
         }
         assignEmptyPorts()
     }

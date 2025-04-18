@@ -6,6 +6,7 @@ import com.intellij.execution.process.ProcessHandler
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.runners.ExecutionEnvironmentBuilder
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.projectRoots.Sdk
 import com.jetbrains.python.PythonHelper
 import com.jetbrains.python.debugger.attach.PyAttachToProcessCommandLineState
 import com.jetbrains.python.run.PythonConfigurationType
@@ -19,7 +20,7 @@ import java.nio.file.Paths
 class MayaAttachToProcessCliState(runConfig: PythonRunConfiguration, env: ExecutionEnvironment) :
     PythonScriptCommandLineState(runConfig, env) {
     companion object {
-        fun create(project: Project, sdkPath: String, port: Int, pid: Int, mayaSdk: ApplicationSettings.SdkInfo): MayaAttachToProcessCliState {
+        fun create(project: Project, sdk: Sdk, port: Int, pid: Int, mayaSdk: ApplicationSettings.SdkInfo): MayaAttachToProcessCliState {
             val conf =
                 PythonConfigurationType.getInstance().factory.createTemplateConfiguration(project) as PythonRunConfiguration
             val env = ExecutionEnvironmentBuilder.create(project, DefaultDebugExecutor.getDebugExecutorInstance(), conf)
@@ -32,7 +33,7 @@ class MayaAttachToProcessCliState(runConfig: PythonRunConfiguration, env: Execut
             PythonEnvUtil.addToPythonPath(conf.envs, listOf(env.project.basePath))
 
             conf.workingDirectory = env.project.basePath
-            conf.sdkHome = sdkPath
+            conf.sdkHome = sdk.homePath
             conf.isUseModuleSdk = false
             conf.scriptName = Paths.get(projectSettings.pythonCachePath.toString(), "attach_pydevd.py").toString()
             conf.scriptParameters = "--port $port --pid $pid --mcPort $mcPort --pydevPath \"$debuggerPath\""

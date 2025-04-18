@@ -53,10 +53,10 @@ class SdkTablePanel(private val project: Project) :
         val selectedSdk = dialog.getOrCreateSdk() ?: return null
         SdkConfigurationUtil.addSdk(selectedSdk)
 
-        selectedSdk.homePath?.let {
+        selectedSdk.let {
             val unusedPort = ApplicationSettings.INSTANCE.getUnusedPort()
             onChanged(this)
-            return ApplicationSettings.SdkInfo(it, unusedPort)
+            return ApplicationSettings.SdkInfo(it.homePath!!, unusedPort)
         }
         return null
     }
@@ -69,7 +69,7 @@ class SdkTablePanel(private val project: Project) :
         ) == 0
 
         if (result) {
-            val sdk = PythonSdkUtil.findSdkByPath(sdkInfo.mayaPyPath) ?: return false
+            val sdk = sdkInfo.sdk ?: return false
             SdkConfigurationUtil.removeSdk(sdk)
         }
         onChanged(this)
