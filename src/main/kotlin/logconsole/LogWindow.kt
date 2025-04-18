@@ -17,7 +17,7 @@ class LogWindow : ToolWindowFactory, DumbAware {
         val port = ProjectSettings.getInstance(project).selectedSdk?.port ?: 4434
 
         val contentManager = toolWindow.contentManager
-        val contentFactory = ContentFactory.SERVICE.getInstance()
+        val contentFactory = ContentFactory.getInstance()
         val mayaLogPath = PathManager.getPluginTempPath() + String.format(LOG_FILENAME_STRING, port)
 
         val console = LogConsole(

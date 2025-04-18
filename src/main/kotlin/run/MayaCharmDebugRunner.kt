@@ -14,7 +14,6 @@ import com.intellij.xdebugger.XDebugSession
 import com.intellij.xdebugger.XDebuggerManager
 import com.jetbrains.python.debugger.PyDebugRunner
 import com.jetbrains.python.debugger.PyLocalPositionConverter
-import com.jetbrains.python.sdk.PythonSdkUtil
 import debugattach.MayaAttachToProcessCliState
 import java.net.ServerSocket
 
@@ -46,7 +45,7 @@ class MayaCharmDebugRunner : PyDebugRunner() {
             return
         }
 
-        val sdk = PythonSdkUtil.findSdkByPath(sdkInfo.mayaPyPath)
+        val sdk = sdkInfo.sdk
         if (sdk == null) {
             MayaNotifications.mayaInstanceNotFound(sdkInfo.mayaPath, environment.project)
             return
@@ -54,7 +53,7 @@ class MayaCharmDebugRunner : PyDebugRunner() {
 
         val serverSocket = ServerSocket(0) // port 0 forces the ServerSocket to choose its own free port
         val cliState =
-            MayaAttachToProcessCliState.create(environment.project, sdk.homePath!!, serverSocket.localPort, process.pid, sdkInfo)
+            MayaAttachToProcessCliState.create(environment.project, sdk, serverSocket.localPort, process.pid, sdkInfo)
         val executionResult = cliState.execute(environment.executor, this)
 
         XDebuggerManager.getInstance(environment.project).startSession(environment, object : XDebugProcessStarter() {

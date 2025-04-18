@@ -5,7 +5,7 @@ import resources.PythonStrings
 import com.intellij.notification.Notifications
 import com.intellij.openapi.application.PathManager
 import com.intellij.util.io.createDirectories
-import com.intellij.util.io.exists
+import kotlin.io.path.exists
 import java.io.*
 import java.net.Socket
 import java.nio.file.Paths

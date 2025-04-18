@@ -1,7 +1,7 @@
 package mayacomms
 
 import com.intellij.openapi.util.SystemInfo
-import com.intellij.util.io.exists
+import kotlin.io.path.exists
 import java.nio.file.Paths
 
 private const val mayaExecutableNameWin = "maya.exe"
