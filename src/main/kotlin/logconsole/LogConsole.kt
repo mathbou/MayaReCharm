@@ -1,20 +1,33 @@
 package logconsole
 
 import com.intellij.diagnostic.logging.DefaultLogFilterModel
-import mayacomms.LOG_FILENAME_STRING
-import settings.ProjectSettings
 import com.intellij.diagnostic.logging.LogConsoleImpl
+import com.intellij.execution.actions.ClearConsoleAction
 import com.intellij.execution.process.ProcessOutputTypes
-import com.intellij.openapi.application.PathManager
+import com.intellij.openapi.actionSystem.ActionGroup
+import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import java.io.File
-import java.io.PrintWriter
 import java.nio.charset.Charset
+
+
+class MyCustomClearConsoleAction(customConsole: LogConsole?) :
+    ClearConsoleAction() {
+    private val myCustomConsole: LogConsole? = customConsole
+
+    override fun actionPerformed(e: AnActionEvent) {
+        super.actionPerformed(e)
+        myCustomConsole?.clearFile()
+    }
+}
+
 
 class LogConsole(
     private val project: Project,
-    file: File,
+    private val file: File,
     charset: Charset,
     skippedContents: Long,
     title: String,
@@ -35,20 +48,18 @@ class LogConsole(
         return true
     }
 
-    override fun clear() {
-        super.clear()
-        val sdk = ProjectSettings.getInstance(project).selectedSdk ?: return
+    fun clearFile() {
+        file.writeText("")
+    }
 
-        val mayaLogPath = PathManager.getPluginTempPath() + String.format(LOG_FILENAME_STRING, sdk.port)
+    override fun getOrCreateActions(): ActionGroup? {
+        val group: DefaultActionGroup = super.getOrCreateActions() as DefaultActionGroup
 
-        var writer: PrintWriter? = null
+        val clearAllAction = MyCustomClearConsoleAction(this)
+        val originalClearAllAction: AnAction = group.childActionsOrStubs.last { it is ClearConsoleAction }
 
-        try {
-            writer = PrintWriter(mayaLogPath)
-            writer.print("")
-            writer.close()
-        } finally {
-            writer?.close()
-        }
+        group.replaceAction(originalClearAllAction, clearAllAction)
+
+        return group as ActionGroup
     }
 }
