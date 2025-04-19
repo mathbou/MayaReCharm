@@ -48,7 +48,7 @@ class ProjectSettings(val project: Project) : PersistentStateComponent<ProjectSe
         pythonCache.delete(true)
         pythonCache.createDirectories()
 
-        for (resPath in listOf("attach_pydevd.py", "attach_script.py")) {
+        for (resPath in listOf("attach_pydevd.py")) {
             val res = this::class.java.classLoader.getResource("python/$resPath") ?: continue
             File("$pythonCache/$resPath").writeBytes(res.readBytes())
         }
