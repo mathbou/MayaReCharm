@@ -2,6 +2,7 @@ package logconsole
 
 import com.intellij.diagnostic.logging.DefaultLogFilterModel
 import com.intellij.diagnostic.logging.LogConsoleImpl
+import com.intellij.diagnostic.logging.LogConsolePreferences
 import com.intellij.execution.actions.ClearConsoleAction
 import com.intellij.execution.process.ProcessOutputTypes
 import com.intellij.openapi.actionSystem.ActionGroup
@@ -42,6 +43,20 @@ class LogConsole(
                 return super.processLine(line)
             }
         })
+    }
+
+    override fun addMessage(text: String?) {
+        var text_: String = text ?: ""
+        val logType = LogConsolePreferences.getType(text_)
+
+        if (logType?.startsWith("WARN") ?: false) {
+            text_ = "\u001B[93m$text_\u001B[0m"
+        }
+        else if (logType?.startsWith("DEBUG") ?: false) {
+            text_ = "\u001B[96m$text_\u001B[0m"
+        }
+
+        super.addMessage(text_)
     }
 
     override fun isActive(): Boolean {
