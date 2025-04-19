@@ -64,7 +64,7 @@ def send_command(port, message):
 def main(setup):
     if sys.platform == 'win32':
         setup['pythonpath'] = setup['pydevPath'].replace("\\", "/")
-        setup['pythonpath2'] = os.path.dirname(__file__).replace('\\', '/')
+        setup['pythonpath2'] = setup['pydevPath'].replace("\\", "/") + "/pydevd_attach_to_process"
         python_code = '''import sys;
 sys.path.append("%(pythonpath)s");
 sys.path.append("%(pythonpath2)s");
@@ -73,7 +73,7 @@ attach_script.attach(%(port)s, "%(host)s");
 '''.replace('\r\n', '').replace('\r', '').replace('\n', '')
     else:
         setup['pythonpath'] = setup['pydevPath']
-        setup['pythonpath2'] = os.path.dirname(__file__)
+        setup['pythonpath2'] = setup['pydevPath'] + "/pydevd_attach_to_process"
         # We have to pass it a bit differently for gdb
         python_code = '''import sys;
 sys.path.append("%(pythonpath)s");
