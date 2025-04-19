@@ -26,7 +26,7 @@ class LogWindow : ToolWindowFactory, DumbAware {
             Charset.defaultCharset(),
             0L,
             "MayaLog",
-            false,
+            true,
             GlobalSearchScope.allScope(project)
         )
 
