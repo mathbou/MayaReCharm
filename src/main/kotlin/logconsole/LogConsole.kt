@@ -2,7 +2,6 @@ package logconsole
 
 import com.intellij.diagnostic.logging.DefaultLogFilterModel
 import mayacomms.LOG_FILENAME_STRING
-import resources.PythonStrings
 import settings.ProjectSettings
 import com.intellij.diagnostic.logging.LogConsoleImpl
 import com.intellij.execution.process.ProcessOutputTypes
@@ -27,9 +26,7 @@ class LogConsole(
         super.setFilterModel(object : DefaultLogFilterModel(project) {
             override fun processLine(line: String?): MyProcessingResult {
                 line ?: return MyProcessingResult(ProcessOutputTypes.STDOUT, false, null)
-                val checks = line.startsWith(PythonStrings.PYSTDERR.message) || line.startsWith(PythonStrings.PYSTDWRN.message)
-                val outType = if (checks) ProcessOutputTypes.STDERR else ProcessOutputTypes.STDOUT
-                return MyProcessingResult(outType, true, null)
+                return super.processLine(line)
             }
         })
     }
