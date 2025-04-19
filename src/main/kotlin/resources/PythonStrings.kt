@@ -1,16 +1,14 @@
 package resources
 
+import java.nio.file.Paths
 import java.text.MessageFormat
 
 enum class PythonStrings(val message: String) {
     UTF8_ENCODING_STR("# -*- coding: utf-8 -*-"),
-    OPEN_LOG("import maya.cmds as cmds;cmds.cmdFileOutput(o=r\"{0}\")"),
-    CLOSE_LOG("import maya.cmds as cmds;cmds.cmdFileOutput(closeAll=True)"),
+    OPEN_LOG(PythonStrings::class.java.classLoader.getResource("python/open_log.py")?.readText()?: ""),
 
     // no clue why the maya.cmds part is needed, but it works and prevents things from getting executing twice
     EXECFILE("python(\"exec(compile(open(\\\"{0}\\\", encoding=\\\"utf-8\\\").read(), \\\"{0}\\\", \\\"exec\\\"))\")"),
-    PYSTDERR("# Error: "),
-    PYSTDWRN("# Warning: "),
     SETTRACE("import pydevd; pydevd.settrace(host=\"{0}\", port={1,number,#}, suspend={2}, stdoutToServer={3}, stderrToServer={3})"),
     STOPTRACE("import pydevd; pydevd.stoptrace()"),
     CMDPORTSETUPSCRIPT("python/command_port_setup.py");

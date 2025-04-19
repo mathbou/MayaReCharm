@@ -73,8 +73,7 @@ class MayaCommandInterface(private val port: Int) {
             if (!it.exists()) it.createNewFile()
         }
 
-        val message = PythonStrings.CLOSE_LOG.message +
-                System.lineSeparator() + PythonStrings.OPEN_LOG.format(mayaLogPath)
+        val message = PythonStrings.OPEN_LOG.format(mayaLogPath)
 
         sendCodeToMaya(message)
     }
