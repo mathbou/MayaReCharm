@@ -1,5 +1,17 @@
 # MayaCharm
 
+## [3.4.0] - 2025-04-20
+### Added
+- Log console with colored output for warn and debug log levels
+- Display actions in log console toolbar
+- Export log from Maya with timestamp and severity level
+
+### Changed
+- Use original `attach_script.py` from pydev
+
+### Fixed
+- Log file clear with custom ClearAll action in log console
+
 ## [3.3.0] - 2025-04-19
 ### Changed
 - Migrated to Gradle 8 and Kotlin/JVM 21
@@ -78,6 +90,7 @@
 - Better support for multiple Maya installs
 - Removed dependencies on PyCharm Professional's remote debugger as well as PyCharm Professional
 
+[3.4.0]: https://github.com/mathbou/MayaCharm/releases/tag/v3.4.0
 [3.3.0]: https://github.com/mathbou/MayaCharm/releases/tag/v3.3.0
 [3.2.7]: https://github.com/cmcpasserby/MayaCharm/releases/tag/v3.2.7
 [3.2.6]: https://github.com/cmcpasserby/MayaCharm/releases/tag/v3.2.6
