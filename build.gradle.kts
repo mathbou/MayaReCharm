@@ -2,9 +2,9 @@ import org.jetbrains.changelog.markdownToHTML
 import org.jetbrains.changelog.Changelog
 
 plugins {
-    kotlin("jvm") version "2.1.20"
-    id("org.jetbrains.intellij.platform") version "2.5.0"
-    id("org.jetbrains.changelog") version "2.2.1"
+    kotlin("jvm") version "2.3.20"
+    id("org.jetbrains.intellij.platform") version "2.14.0"
+    id("org.jetbrains.changelog") version "2.5.0"
 }
 
 group = providers.gradleProperty("pluginGroup").get()
@@ -29,9 +29,8 @@ repositories {
 
 dependencies {
     intellijPlatform {
-        val type = providers.gradleProperty("platformType")
         val version = providers.gradleProperty("platformVersion")
-        create(type, version, useInstaller = false)
+        pycharm(version, { useInstaller = false })
 
         pluginVerifier()
 
@@ -99,6 +98,7 @@ changelog {
 tasks {
     wrapper {
         gradleVersion = providers.gradleProperty("gradleVersion").get()
+        distributionType = Wrapper.DistributionType.BIN
     }
 
     withType<JavaCompile> {
