@@ -4,7 +4,6 @@ import MayaBundle as Loc
 import settings.ApplicationSettings
 import utils.Delegate
 import utils.Event
-import flavors.MayaSdkFlavor as MyMayaSdkFlavor
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
@@ -14,8 +13,6 @@ import com.intellij.ui.AddEditRemovePanel
 import com.intellij.ui.IdeBorderFactory
 import com.intellij.ui.ToolbarDecorator
 import com.intellij.util.ui.UIUtil
-import com.jetbrains.python.sdk.PythonSdkUtil
-import com.jetbrains.python.sdk.getOrCreateAdditionalData
 import java.awt.BorderLayout
 
 private class SdkTableModel : AddEditRemovePanel.TableModel<ApplicationSettings.SdkInfo>() {
@@ -40,24 +37,15 @@ class SdkTablePanel(private val project: Project) :
     val changed: Event<SdkTablePanel> get() = onChanged
 
     override fun addItem(): ApplicationSettings.SdkInfo? {
-        val existingSdks = PythonSdkUtil.getAllLocalCPythons().filter {
-            !data.map { sdkInfo -> sdkInfo.mayaPyPath }.contains(it.homePath) && it.getOrCreateAdditionalData().run {
-                flavor == MyMayaSdkFlavor
-            }
-        }
-
-        val dialog = SdkAddDialog(project, existingSdks)
+        val dialog = MayaSdkAddDialog(project)
         dialog.show()
 
-        val selectedSdk = dialog.getOrCreateSdk() ?: return null
-        SdkConfigurationUtil.addSdk(selectedSdk)
+        val sdk = dialog.getCreatedSdk() ?: return null
+        val homePath = sdk.homePath ?: return null
 
-        selectedSdk.let {
-            val unusedPort = ApplicationSettings.INSTANCE.getUnusedPort()
-            onChanged(this)
-            return ApplicationSettings.SdkInfo(it.homePath!!, unusedPort)
-        }
-        return null
+        val unusedPort = ApplicationSettings.INSTANCE.getUnusedPort()
+        onChanged(this)
+        return ApplicationSettings.SdkInfo(homePath, unusedPort)
     }
 
     override fun removeItem(sdkInfo: ApplicationSettings.SdkInfo): Boolean {

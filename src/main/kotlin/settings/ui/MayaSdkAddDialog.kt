@@ -61,7 +61,7 @@ class MayaSdkAddDialog(private val project: Project) : DialogWrapper(project, fa
     private var createdSdk: Sdk? = null
 
     init {
-        title = Loc.message("mayacharm.sdkadd.AddMayaSdk")
+        title = Loc.message("mayarecharm.sdkadd.AddMayaSdk")
 
         // Populate auto-detected Maya installations
         populateDetected()
@@ -78,7 +78,7 @@ class MayaSdkAddDialog(private val project: Project) : DialogWrapper(project, fa
 
             // Row 0: Detected installations
             weightx = 0.0
-            myPanel.add(JLabel(Loc.message("mayacharm.sdkadd.Detected"), JLabel.RIGHT), this)
+            myPanel.add(JLabel(Loc.message("mayarecharm.sdkadd.Detected"), JLabel.RIGHT), this)
 
             gridx = 1
             weightx = 1.0
@@ -88,7 +88,7 @@ class MayaSdkAddDialog(private val project: Project) : DialogWrapper(project, fa
             gridy = 1
             gridx = 0
             weightx = 0.0
-            myPanel.add(JLabel(Loc.message("mayacharm.sdkadd.InterpreterPath"), JLabel.RIGHT), this)
+            myPanel.add(JLabel(Loc.message("mayarecharm.sdkadd.InterpreterPath"), JLabel.RIGHT), this)
 
             gridx = 1
             weightx = 1.0
@@ -106,16 +106,16 @@ class MayaSdkAddDialog(private val project: Project) : DialogWrapper(project, fa
     override fun doValidate(): ValidationInfo? {
         val path = pathField.text.trim()
         if (path.isEmpty()) {
-            return ValidationInfo(Loc.message("mayacharm.sdkadd.PathEmpty"), pathField)
+            return ValidationInfo(Loc.message("mayarecharm.sdkadd.PathEmpty"), pathField)
         }
 
         val file = File(path)
         if (!file.isFile) {
-            return ValidationInfo(Loc.message("mayacharm.sdkadd.PathNotFound"), pathField)
+            return ValidationInfo(Loc.message("mayarecharm.sdkadd.PathNotFound"), pathField)
         }
 
         if (!MayaSdkFlavor.isValidMayapyPath(path)) {
-            return ValidationInfo(Loc.message("mayacharm.sdkadd.NotMayapy"), pathField)
+            return ValidationInfo(Loc.message("mayarecharm.sdkadd.NotMayapy"), pathField)
         }
 
         // Check not already registered
@@ -123,7 +123,7 @@ class MayaSdkAddDialog(private val project: Project) : DialogWrapper(project, fa
             it.homePath?.equals(path, ignoreCase = true) == true
         }
         if (existing) {
-            return ValidationInfo(Loc.message("mayacharm.sdkadd.AlreadyRegistered"), pathField)
+            return ValidationInfo(Loc.message("mayarecharm.sdkadd.AlreadyRegistered"), pathField)
         }
 
         return null
@@ -138,7 +138,7 @@ class MayaSdkAddDialog(private val project: Project) : DialogWrapper(project, fa
         createdSdk = SdkConfigurationUtil.createAndAddSDK(path, PythonSdkType.getInstance())
 
         if (createdSdk == null) {
-            setErrorText(Loc.message("mayacharm.sdkadd.FailedToCreate"), pathField)
+            setErrorText(Loc.message("mayarecharm.sdkadd.FailedToCreate"), pathField)
             return
         }
 
@@ -163,7 +163,7 @@ class MayaSdkAddDialog(private val project: Project) : DialogWrapper(project, fa
         val available = detected.filter { it.toString().lowercase() !in registeredPaths }
 
         if (available.isEmpty()) {
-            detectedModel.addElement(DetectedMaya(Loc.message("mayacharm.sdkadd.NoDetected"), null))
+            detectedModel.addElement(DetectedMaya(Loc.message("mayarecharm.sdkadd.NoDetected"), null))
         } else {
             for (path in available) {
                 val label = buildMayaLabel(path)
@@ -193,8 +193,8 @@ class MayaSdkAddDialog(private val project: Project) : DialogWrapper(project, fa
      */
     private fun createMayapyChooserDescriptor(): FileChooserDescriptor {
         return FileChooserDescriptor(true, true, false, false, false, false)
-            .withTitle(Loc.message("mayacharm.sdkadd.BrowseTitle"))
-            .withDescription(Loc.message("mayacharm.sdkadd.BrowseDescription"))
+            .withTitle(Loc.message("mayarecharm.sdkadd.BrowseTitle"))
+            .withDescription(Loc.message("mayarecharm.sdkadd.BrowseDescription"))
             .withFileFilter { file ->
                 file.isDirectory || file.nameWithoutExtension.equals("mayapy", ignoreCase = true)
             }
