@@ -3,7 +3,6 @@ package mayacomms
 import resources.MayaNotifications
 import resources.PythonStrings
 import com.intellij.notification.Notifications
-import com.intellij.openapi.application.PathManager
 import com.intellij.util.io.createDirectories
 import kotlin.io.path.exists
 import java.io.*
@@ -64,9 +63,9 @@ class MayaCommandInterface(private val port: Int) {
     }
 
     fun connectMayaLog() {
-        val mayaLogPath = Paths.get(PathManager.getPluginTempPath()).let {
+        val mayaLogPath = Paths.get(System.getProperty("java.io.tmpdir")).let {
             if (!it.exists()) it.createDirectories()
-            Paths.get(it.toString() + logFileName)
+            Paths.get(it.toString(), logFileName)
         }
 
         File(mayaLogPath.toString()).also {
