@@ -2,7 +2,6 @@ package logconsole
 
 import mayacomms.LOG_FILENAME_STRING
 import settings.ProjectSettings
-import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
@@ -18,11 +17,12 @@ class LogWindow : ToolWindowFactory, DumbAware {
 
         val contentManager = toolWindow.contentManager
         val contentFactory = ContentFactory.getInstance()
-        val mayaLogPath = PathManager.getPluginTempPath() + String.format(LOG_FILENAME_STRING, port)
+
+        val mayaLogPath = File(System.getProperty("java.io.tmpdir"), String.format(LOG_FILENAME_STRING, port))
 
         val console = LogConsole(
             project,
-            File(mayaLogPath),
+            mayaLogPath,
             Charset.defaultCharset(),
             0L,
             "MayaLog",
