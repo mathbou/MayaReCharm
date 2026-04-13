@@ -19,7 +19,7 @@ class SdkAddDialog(project: Project, private val existingSdks: List<Sdk>) : Dial
     private val sdkChooser = PySdkPathChoosingComboBox(existingSdks, null)
 
     init {
-        title = Loc.message("mayacharm.sdkadd.AddMayaSdk")
+        title = Loc.message("mayarecharm.sdkadd.AddMayaSdk")
         init()
 
         with(GridBagConstraints()) {
@@ -30,7 +30,7 @@ class SdkAddDialog(project: Project, private val existingSdks: List<Sdk>) : Dial
             gridwidth = 1
 
             weightx = 0.0
-            myPanel.add(JLabel(Loc.message("mayacharm.sdkadd.Interpreter"), JLabel.RIGHT), this)
+            myPanel.add(JLabel(Loc.message("mayarecharm.sdkadd.Interpreter"), JLabel.RIGHT), this)
 
             gridx = 1
             weightx = 1.0

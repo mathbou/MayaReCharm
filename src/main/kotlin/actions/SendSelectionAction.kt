@@ -9,8 +9,8 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.LangDataKeys
 
 class SendSelectionAction : BaseSendAction(
-    Loc.message("mayacharm.action.SendSelectionText"),
-    Loc.message("mayacharm.action.SendSelectionDescription"), null
+    Loc.message("mayarecharm.action.SendSelectionText"),
+    Loc.message("mayarecharm.action.SendSelectionDescription"), null
 ) {
     override fun actionPerformed(e: AnActionEvent) {
         val sdk = ProjectSettings.getInstance(e.project!!).selectedSdk

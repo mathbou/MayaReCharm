@@ -20,7 +20,7 @@ class ProjectSettings(val project: Project) : PersistentStateComponent<ProjectSe
 
     private var myState = State()
 
-    val pythonCachePath: Path = Paths.get(project.getProjectCachePath("MayaCharm").toString(), "python")
+    val pythonCachePath: Path = Paths.get(project.getProjectCachePath("MayaReCharm").toString(), "python")
 
     init {
         unpackResources()

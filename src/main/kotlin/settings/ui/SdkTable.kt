@@ -25,7 +25,7 @@ private class SdkTableModel : AddEditRemovePanel.TableModel<ApplicationSettings.
     }
 
     override fun getColumnName(cIndex: Int): String {
-        return if (cIndex == 0) Loc.message("mayacharm.sdktable.MayaVersion") else Loc.message("mayacharm.sdktable.CommandPort")
+        return if (cIndex == 0) Loc.message("mayarecharm.sdktable.MayaVersion") else Loc.message("mayarecharm.sdktable.CommandPort")
     }
 
     override fun getField(o: ApplicationSettings.SdkInfo, cIndex: Int): Any {
@@ -63,9 +63,9 @@ class SdkTablePanel(private val project: Project) :
 
     override fun removeItem(sdkInfo: ApplicationSettings.SdkInfo): Boolean {
         val result = Messages.showDialog(
-            Loc.message("mayacharm.sdkremove.RemoveWarning"), Loc.message("mayacharm.sdkremove.Title"),
-            arrayOf(Loc.message("mayacharm.Yes"), Loc.message("mayacharm.No")), 0,
-            IconLoader.getIcon("/icons/MayaCharm_Action@2x.png", this::class.java)
+            Loc.message("mayarecharm.sdkremove.RemoveWarning"), Loc.message("mayarecharm.sdkremove.Title"),
+            arrayOf(Loc.message("mayarecharm.Yes"), Loc.message("mayarecharm.No")), 0,
+            IconLoader.getIcon("/icons/MayaReCharm_Action@2x.png", this::class.java)
         ) == 0
 
         if (result) {

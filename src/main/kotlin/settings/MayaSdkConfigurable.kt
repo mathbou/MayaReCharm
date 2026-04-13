@@ -66,7 +66,7 @@ class MayaSdkConfigurable(project: Project) : SearchableConfigurable, Configurab
     }
 
     override fun getDisplayName(): String {
-        return "MayaCharm"
+        return "MayaReCharm"
     }
 
     override fun getHelpTopic(): String? {

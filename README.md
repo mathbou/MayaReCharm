@@ -1,4 +1,4 @@
-# MayaCharm
+# MayaReCharm
 <!-- Plugin description -->
 Maya integration with run and debug configurations for Maya. MayaCharm lets you execute the current document or
 arbitrary code as if it was in Maya from PyCharm, as well as attaching the local PyDev debugger to a running Maya instance.

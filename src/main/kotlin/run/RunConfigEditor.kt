@@ -13,25 +13,25 @@ import java.awt.GridBagLayout
 import java.awt.Insets
 import javax.swing.*
 
-class RunConfigEditor(config: MayaCharmRunConfiguration) : SettingsEditor<MayaCharmRunConfiguration>() {
+class RunConfigEditor(config: MayaReCharmRunConfiguration) : SettingsEditor<MayaReCharmRunConfiguration>() {
     private val myPanel = JPanel(GridBagLayout())
 
     private val buttonGroup = ButtonGroup()
     private val sdkSelector = SdkSelector()
 
     private val fileRadioButton =
-        JRadioButton(Loc.message("mayacharm.configedit.ExecuteFile"), true).apply { update(this) }
+        JRadioButton(Loc.message("mayarecharm.configedit.ExecuteFile"), true).apply { update(this) }
     private val fileField = TextFieldWithBrowseButton().apply {
         val fileTypeFilter = FileChooserDescriptor(true, false, false, false, false, false)
         addBrowseFolderListener(
-            Loc.message("mayacharm.configedit.SelectFile"),
-            Loc.message("mayacharm.configedit.SelectFileLong"),
+            Loc.message("mayarecharm.configedit.SelectFile"),
+            Loc.message("mayarecharm.configedit.SelectFileLong"),
             config.project,
             fileTypeFilter
         )
     }
 
-    private val codeRadioButton = JRadioButton(Loc.message("mayacharm.configedit.ExecuteCode")).apply { update(this) }
+    private val codeRadioButton = JRadioButton(Loc.message("mayarecharm.configedit.ExecuteCode")).apply { update(this) }
     private val codeField =
         EditorTextField("", config.project, FileTypeManager.getInstance().getFileTypeByExtension(".py")).apply {
             setOneLineMode(false)
@@ -53,7 +53,7 @@ class RunConfigEditor(config: MayaCharmRunConfiguration) : SettingsEditor<MayaCh
             gridy++
             gridwidth = 1
             weightx = 0.0
-            myPanel.add(JLabel(Loc.message("mayacharm.configedit.File"), JLabel.RIGHT), this)
+            myPanel.add(JLabel(Loc.message("mayarecharm.configedit.File"), JLabel.RIGHT), this)
             gridx = 1
             weightx = 1.0
             myPanel.add(fileField, this)
@@ -67,7 +67,7 @@ class RunConfigEditor(config: MayaCharmRunConfiguration) : SettingsEditor<MayaCh
             gridy++
             gridwidth = 1
             weightx = 0.0
-            myPanel.add(JLabel(Loc.message("mayacharm.configedit.Code"), JLabel.RIGHT), this)
+            myPanel.add(JLabel(Loc.message("mayarecharm.configedit.Code"), JLabel.RIGHT), this)
             gridx = 1
             weightx = 1.0
             myPanel.add(codeField, this)
@@ -85,7 +85,7 @@ class RunConfigEditor(config: MayaCharmRunConfiguration) : SettingsEditor<MayaCh
         }
     }
 
-    override fun resetEditorFrom(config: MayaCharmRunConfiguration) {
+    override fun resetEditorFrom(config: MayaReCharmRunConfiguration) {
         sdkSelector.items = ApplicationSettings.INSTANCE.mayaSdkMapping.keys.toList().sorted()
         sdkSelector.selectedItem = config.mayaSdkPath
 
@@ -98,7 +98,7 @@ class RunConfigEditor(config: MayaCharmRunConfiguration) : SettingsEditor<MayaCh
         fileField.isEnabled = fileRadioButton.isSelected
     }
 
-    override fun applyEditorTo(config: MayaCharmRunConfiguration) {
+    override fun applyEditorTo(config: MayaReCharmRunConfiguration) {
         config.mayaSdkPath = sdkSelector.selectedItem ?: ""
         config.scriptFilePath = fileField.text
         config.scriptCodeText = codeField.text

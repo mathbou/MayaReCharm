@@ -17,13 +17,13 @@ import com.jetbrains.python.debugger.PyLocalPositionConverter
 import debugattach.MayaAttachToProcessCliState
 import java.net.ServerSocket
 
-class MayaCharmDebugRunner : PyDebugRunner() {
+class MayaReCharmDebugRunner : PyDebugRunner() {
     override fun getRunnerId(): String {
-        return "MayaCharmDebugRunner"
+        return "MayaReCharmDebugRunner"
     }
 
     override fun canRun(executorId: String, runProfile: RunProfile): Boolean {
-        val runConfig = runProfile as? MayaCharmRunConfiguration ?: return false
+        val runConfig = runProfile as? MayaReCharmRunConfiguration ?: return false
 
         try {
             runConfig.checkConfiguration()
@@ -36,7 +36,7 @@ class MayaCharmDebugRunner : PyDebugRunner() {
 
     override fun execute(environment: ExecutionEnvironment) {
         val sdks = ApplicationSettings.INSTANCE.mayaSdkMapping
-        val runConfig = environment.runProfile as MayaCharmRunConfiguration
+        val runConfig = environment.runProfile as MayaReCharmRunConfiguration
         val sdkInfo = sdks[runConfig.mayaSdkPath] ?: return
 
         val process = ProcessListUtil.getProcessList().firstOrNull { it.commandLine.contains(sdkInfo.mayaPath) }
@@ -58,7 +58,7 @@ class MayaCharmDebugRunner : PyDebugRunner() {
 
         XDebuggerManager.getInstance(environment.project).startSession(environment, object : XDebugProcessStarter() {
             override fun start(session: XDebugSession): XDebugProcess {
-                val debugProcess = MayaCharmDebugProcess(
+                val debugProcess = MayaReCharmDebugProcess(
                     session,
                     serverSocket,
                     executionResult.executionConsole,
