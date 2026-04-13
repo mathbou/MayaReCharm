@@ -1,4 +1,4 @@
-# MayaCharm
+# MayaReCharm
 
 ## [4.0.0] - 2026-04-13
 ### Added
@@ -101,9 +101,9 @@
 - Better support for multiple Maya installs
 - Removed dependencies on PyCharm Professional's remote debugger as well as PyCharm Professional
 
-[4.0.0]: https://github.com/mathbou/MayaCharm/releases/tag/v4.0.0
-[3.4.0]: https://github.com/mathbou/MayaCharm/releases/tag/v3.4.0
-[3.3.0]: https://github.com/mathbou/MayaCharm/releases/tag/v3.3.0
+[4.0.0]: https://github.com/mathbou/MayaReCharm/releases/tag/v4.0.0
+[3.4.0]: https://github.com/mathbou/MayaReCharm/releases/tag/v3.4.0
+[3.3.0]: https://github.com/mathbou/MayaReCharm/releases/tag/v3.3.0
 [3.2.7]: https://github.com/cmcpasserby/MayaCharm/releases/tag/v3.2.7
 [3.2.6]: https://github.com/cmcpasserby/MayaCharm/releases/tag/v3.2.6
 [3.2.5]: https://github.com/cmcpasserby/MayaCharm/releases/tag/v3.2.5

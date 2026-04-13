@@ -1,31 +1,53 @@
 # MayaReCharm
+
 <!-- Plugin description -->
-Maya integration with run and debug configurations for Maya. MayaCharm lets you execute the current document or
-arbitrary code as if it was in Maya from PyCharm, as well as attaching the local PyDev debugger to a running Maya instance.
+Maya integration for PyCharm. MayaReCharm lets you execute the current document or arbitrary code directly in Maya, and
+allows attaching the PyDev debugger to a running Maya instance.
 <!-- Plugin description end -->
 
-For those simply just wanting the compiled version, you are best to just search for it, in the plugin repository of PyCharm.
-https://plugins.jetbrains.com/plugin/8218?pr=pycharm
+For those looking for the compiled version, you can find it in the JetBrains Marketplace:
+[https://plugins.jetbrains.com/plugin/31239-mayarecharm/](https://plugins.jetbrains.com/plugin/31239-mayarecharm/)
 
-## Installation 
-It requires some minimal setup. The settings panel is in `Settings > Other Settings > MayaCharm` here you can define what port numbers
-MayaCharm will talk to your Maya installs on. This is where you also define the default Maya install that the `Execute Documeant In Maya` and `Execute Selection in Maya` actions will be performed on. Currently, MayaCharm looks for any `mayapy` interpreters you have set up, and uses those to define where your Maya installs are. 
-These can be added and removed from the `Project Interpreter` section of the settings panel.
+## Installation
 
-![MayaCharm Settings Panel](docs/MayaCharm3_Settings.png)
+MayaReCharm requires some minimal setup. The settings panel is located at `Settings | Other Settings | MayaReCharm`.
 
-When you edit a port number MayaCharm will also display what code you either need to execute in maya 
-or add to your `usersetup.py` to open maya up to connections from MayaCharm.
+- **Port Numbers:** Define the port numbers MayaReCharm will use to communicate with your Maya installations.
+- **Active Maya SDK:** Set the Maya installation used for the `Execute Document` and `Execute Selection` actions.
+- **Maya Interpreters:** Add `mayapy` interpreters to make them available for code execution. Note that adding `mayapy`
+  via the standard `Settings | Python Interpreter` is not supported.
 
-![MayaCharm Settings Panel](docs/MayaCharm3_EditPort.png)
+![MayaReCharm Settings Panel](docs/MayaReCharm3_Settings.png)
 
+When editing a port number, MayaReCharm displays the code required to open Maya for connections. You can execute this
+code in Maya or add it to your `userSetup.py` file.
+
+![MayaReCharm Settings Panel](docs/MayaReCharm3_EditPort.png)
 
 ## Usage
-Once the plugin is installed and setup MayaCharm will be displayed as a type of run configuration. You just need to tell it what Maya instance to connect to, and provide either a python file, or some code to be excuted on run. Debugging is no longer supported via the Run Config since it was unreliable, but the plugin does allows the regular `Attach to process...` command to recognize Maya and attach.
 
-![MayaCharm Debugger Panel](docs/MayaCharm3_RunConfig.png)
+Once configured, mayapy interpreters are available as Python Interpreter. You can select them through the bottom-right
+interpreter selector in the IDE.
 
-There is also a `Execute Selection` and an `Execute Document` actions in the run menu, that can also be accessed via `alt+s` and `alt+a`.
-If you just want to attach to a existing Maya process you can use the `Attach to Process...` option in the `Run` menu and Maya instances will now show up in this menu as well as regular python instances.
+![MayaReCharm_select_interpreter.jpg](docs/MayaReCharm_select_interpreter.jpg)
 
-![MayaCharm Attach Dialog](docs/mc_attach_to_proc.png)
+MayaReCharm also adds a new type of Run Configuration. Select the Maya instance to connect to and provide a Python file
+or specific code to execute.
+
+![MayaReCharm Run Config](docs/MayaReCharm3_RunConfig.jpg)
+
+### Actions
+
+MayaReCharm provides two main actions in the `Run` menu, which can also be accessed via keyboard shortcuts:
+
+- **Execute Document (`Alt+A`):** Sends the entire current file to Maya.
+- **Execute Selection (`Alt+S`):** Sends only the selected code to Maya.
+
+### Debugging
+
+Debugging via Run Configurations is no longer supported due to reliability issues. However, you can use the standard
+`Run | Attach to Process...` command. MayaReCharm ensures Maya instances are correctly identified in the
+process list, allowing you to attach the local PyDev debugger.
+
+![MayaReCharm Attach Dialog](docs/mc_attach_to_proc.png)
+
