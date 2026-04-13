@@ -55,7 +55,7 @@ class SdkEditDialog(project: Project, private val sdkInfo: ApplicationSettings.S
     }
 
     init {
-        title = Loc.message("mayacharm.sdkedit.EditPortNumber")
+        title = Loc.message("mayarecharm.sdkedit.EditPortNumber")
         updateSetupText()
         updateOkButton()
         init()
@@ -68,7 +68,7 @@ class SdkEditDialog(project: Project, private val sdkInfo: ApplicationSettings.S
             gridwidth = 1
 
             weightx = 0.0
-            myPanel.add(JLabel(Loc.message("mayacharm.sdkedit.SdkName"), JLabel.RIGHT), this)
+            myPanel.add(JLabel(Loc.message("mayarecharm.sdkedit.SdkName"), JLabel.RIGHT), this)
 
             gridx = 1
             weightx = 1.0
@@ -77,7 +77,7 @@ class SdkEditDialog(project: Project, private val sdkInfo: ApplicationSettings.S
             gridy++
             gridx = 0
             weightx = 0.0
-            myPanel.add(JLabel(Loc.message("mayacharm.sdkedit.PortNumber"), JLabel.RIGHT), this)
+            myPanel.add(JLabel(Loc.message("mayarecharm.sdkedit.PortNumber"), JLabel.RIGHT), this)
 
             gridx = 1
             weightx = 1.0
@@ -89,7 +89,7 @@ class SdkEditDialog(project: Project, private val sdkInfo: ApplicationSettings.S
             gridwidth = 2
             myPanel.add(
                 JLabel(
-                    Loc.message("mayacharm.sdkedit.ExplainUserSetup"),
+                    Loc.message("mayarecharm.sdkedit.ExplainUserSetup"),
                     JLabel.LEFT
                 ), this
             )

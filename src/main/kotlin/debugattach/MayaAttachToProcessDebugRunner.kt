@@ -13,7 +13,7 @@ import com.intellij.xdebugger.XDebuggerManager
 import com.jetbrains.python.debugger.PyDebugRunner
 import com.jetbrains.python.debugger.PyLocalPositionConverter
 import com.jetbrains.python.debugger.attach.PyAttachToProcessDebugRunner
-import run.MayaCharmDebugProcess
+import run.MayaReCharmDebugProcess
 import settings.ApplicationSettings
 import java.io.IOException
 import java.net.ServerSocket
@@ -38,8 +38,8 @@ class MayaAttachToProcessDebugRunner(
         } catch (e: IOException) {
             e.printStackTrace()
             Messages.showErrorDialog(
-                Loc.message("mayacharm.debugattachproc.FailedFindPort"),
-                Loc.message("mayacharm.debugattachproc.FailedFindPortTitle")
+                Loc.message("mayarecharm.debugattachproc.FailedFindPort"),
+                Loc.message("mayarecharm.debugattachproc.FailedFindPortTitle")
             )
         }
         return portSocket
@@ -50,12 +50,12 @@ class MayaAttachToProcessDebugRunner(
         val state = MayaAttachToProcessCliState.create(project, sdk!!, serverSocket.localPort, pid, mayaSdk)
         val result = state.execute(state.environment.executor, this)
 
-        val icon = IconLoader.getIcon("/icons/MayaCharm_ToolWindow.png", this::class.java)
+        val icon = IconLoader.getIcon("/icons/MayaReCharm_ToolWindow.png", this::class.java)
 
         return XDebuggerManager.getInstance(project)
             .startSessionAndShowTab(pid.toString(), icon, null, false, object : XDebugProcessStarter() {
                 override fun start(dSession: XDebugSession): XDebugProcess {
-                    val process = MayaCharmDebugProcess(
+                    val process = MayaReCharmDebugProcess(
                         dSession,
                         serverSocket,
                         result.executionConsole,

@@ -14,8 +14,8 @@ import java.io.File
 
 enum class ExecutionType { FILE, CODE }
 
-class MayaCharmRunConfiguration(project: Project, factory: ConfigurationFactory?, name: String?) :
-    RunConfigurationBase<MayaCharmRunConfiguration.ConfigurationState>(project, factory, name) {
+class MayaReCharmRunConfiguration(project: Project, factory: ConfigurationFactory?, name: String?) :
+    RunConfigurationBase<MayaReCharmRunConfiguration.ConfigurationState>(project, factory, name) {
     var mayaSdkPath: String = ProjectSettings.getInstance(project).selectedSdkName ?: ""
     var scriptFilePath: String = ""
     var scriptCodeText: String = ""
@@ -51,16 +51,16 @@ class MayaCharmRunConfiguration(project: Project, factory: ConfigurationFactory?
 
     override fun checkConfiguration() {
         if (mayaSdkPath.isBlank())
-            throw RuntimeConfigurationException(Loc.message("mayacharm.runconfig.SdkNotSelected"))
+            throw RuntimeConfigurationException(Loc.message("mayarecharm.runconfig.SdkNotSelected"))
 
         when (executionType) {
             ExecutionType.CODE -> {
                 if (scriptCodeText.isBlank())
-                    throw RuntimeConfigurationException(Loc.message("mayacharm.runconfig.CodeFieldIsEmpty"))
+                    throw RuntimeConfigurationException(Loc.message("mayarecharm.runconfig.CodeFieldIsEmpty"))
             }
             ExecutionType.FILE -> {
                 if (scriptFilePath.isBlank() || !File(scriptFilePath).isFile)
-                    throw RuntimeConfigurationException(Loc.message("mayacharm.runconfig.FilesNotExist"))
+                    throw RuntimeConfigurationException(Loc.message("mayarecharm.runconfig.FilesNotExist"))
             }
         }
     }

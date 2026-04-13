@@ -20,7 +20,7 @@ class MayaCommandInterface(private val port: Int) {
         val bw: BufferedWriter
 
         try {
-            tempFile = File.createTempFile("MayaCharmTemp", ".py") ?: return null
+            tempFile = File.createTempFile("MayaReCharmTemp", ".py") ?: return null
             if (!tempFile.exists()) {
                 tempFile.createNewFile()
             }

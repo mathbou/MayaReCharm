@@ -17,7 +17,7 @@ class SdkSelector : JPanel(GridBagLayout()) {
             gridx = 0
             gridy = 0
             fill = GridBagConstraints.HORIZONTAL
-            add(JLabel(Loc.message("mayacharm.ActiveMayaSdk")), this)
+            add(JLabel(Loc.message("mayarecharm.ActiveMayaSdk")), this)
 
             gridx = 1
             weightx = 0.1

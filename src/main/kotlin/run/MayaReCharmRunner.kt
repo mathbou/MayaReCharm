@@ -14,13 +14,13 @@ import com.intellij.execution.runners.GenericProgramRunner
 import com.intellij.execution.ui.RunContentDescriptor
 import com.intellij.openapi.fileEditor.FileDocumentManager
 
-class MayaCharmRunner : GenericProgramRunner<RunnerSettings>() {
+class MayaReCharmRunner : GenericProgramRunner<RunnerSettings>() {
     override fun getRunnerId(): String {
-        return "MayaCharmRunner"
+        return "MayaReCharmRunner"
     }
 
     override fun canRun(executorId: String, runProfile: RunProfile): Boolean {
-        val runConfig = runProfile as? MayaCharmRunConfiguration ?: return false
+        val runConfig = runProfile as? MayaReCharmRunConfiguration ?: return false
 
         try {
             runConfig.checkConfiguration()
@@ -36,7 +36,7 @@ class MayaCharmRunner : GenericProgramRunner<RunnerSettings>() {
         val appSettings = ApplicationSettings.INSTANCE
         FileDocumentManager.getInstance().saveAllDocuments()
 
-        val config = environment.runProfile as MayaCharmRunConfiguration
+        val config = environment.runProfile as MayaReCharmRunConfiguration
 
         val maya = MayaCommandInterface(appSettings.mayaSdkMapping[config.mayaSdkPath]!!.port)
 

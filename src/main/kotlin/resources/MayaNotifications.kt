@@ -5,30 +5,30 @@ import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.project.Project
 
-private const val displayGroup = "MayaCharm"
-private const val titleText = "MayaCharm"
+private const val displayGroup = "MayaReCharm"
+private const val titleText = "MayaReCharm"
 
 object MayaNotifications {
     val CONNECTION_REFUSED = Notification(
         displayGroup, titleText,
-        Loc.message("mayacharm.notifications.ConnectionRefused"), NotificationType.ERROR
+        Loc.message("mayarecharm.notifications.ConnectionRefused"), NotificationType.ERROR
     )
 
     val FILE_FAIL = Notification(
         displayGroup, titleText,
-        Loc.message("mayacharm.notifications.FailedToCreateTempFile"), NotificationType.ERROR
+        Loc.message("mayarecharm.notifications.FailedToCreateTempFile"), NotificationType.ERROR
     )
 
     val NO_SDK_SELECTED = Notification(
         displayGroup, titleText,
-        Loc.message("mayacharm.notifications.NoSdkSelected"), NotificationType.ERROR
+        Loc.message("mayarecharm.notifications.NoSdkSelected"), NotificationType.ERROR
     )
 
     fun mayaInstanceNotFound(instancePath: String, project: Project) {
         Notification(
             displayGroup,
             titleText,
-            Loc.message("mayacharm.notifications.NoRunningMayaInstanceFor", instancePath),
+            Loc.message("mayarecharm.notifications.NoRunningMayaInstanceFor", instancePath),
             NotificationType.ERROR
         ).notify(project)
     }

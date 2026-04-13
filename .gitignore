@@ -83,8 +83,8 @@ fabric.properties
 
 # End of https://www.gitignore.io/api/intellij
 
-/MayaCharm.zip
-/MayaCharm.jar
+/MayaReCharm.zip
+/MayaReCharm.jar
 
 # Created by https://www.gitignore.io/api/gradle
 # Edit at https://www.gitignore.io/?templates=gradle

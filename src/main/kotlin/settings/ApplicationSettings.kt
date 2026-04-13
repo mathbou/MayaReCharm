@@ -14,7 +14,7 @@ private val portRange = (4434..4534).toSet()
 
 @State(
     name = "MCAppSettings",
-    storages = [Storage(value = "mayacharm.settings.xml", roamingType = RoamingType.DISABLED)]
+    storages = [Storage(value = "mayarecharm.settings.xml", roamingType = RoamingType.DISABLED)]
 )
 class ApplicationSettings : PersistentStateComponent<ApplicationSettings.State> {
     data class SdkInfo(var mayaPyPath: String = "", var port: Int = -1) {

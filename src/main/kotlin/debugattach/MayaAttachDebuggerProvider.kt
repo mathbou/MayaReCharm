@@ -70,7 +70,7 @@ private class MayaAttachGroup : XAttachProcessPresentationGroup {
     }
 
     override fun getItemIcon(project: Project, processInfo: ProcessInfo, userData: UserDataHolder): Icon {
-        return IconLoader.getIcon("/icons/MayaCharm_ToolWindow.png", this::class.java)
+        return IconLoader.getIcon("/icons/MayaReCharm_ToolWindow.png", this::class.java)
     }
 
     override fun getGroupName(): String {

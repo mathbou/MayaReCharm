@@ -1,25 +1,25 @@
 <idea-plugin>
-    <id>ca.rightsomegoodgames.mayacharm</id>
-    <name>MayaCharm</name>
-    <vendor email="chris@rightsomegoodgames.ca" url="https://github.com/cmcpasserby">Chris Cunningham</vendor>
+    <id>fr.mathbou.mayarecharm</id>
+    <name>MayaReCharm</name>
+    <vendor url="https://github.com/mathbou">Mathieu Bouzard</vendor>
 
     <depends>com.intellij.modules.lang</depends>
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.python</depends>
     <depends>com.intellij.modules.xdebugger</depends>
 
-    <resource-bundle>MayaCharmBundle</resource-bundle>
+    <resource-bundle>MayaReCharmBundle</resource-bundle>
 
     <extensions defaultExtensionNs="com.intellij">
         <projectService serviceImplementation="settings.ProjectSettings"/>
         <applicationService serviceImplementation="settings.ApplicationSettings"/>
         <projectConfigurable instance="settings.MayaSdkConfigurable"/>
 
-        <toolWindow id="MayaLog" anchor="bottom" factoryClass="logconsole.LogWindow" icon="/icons/MayaCharm_ToolWindow.png"/>
+        <toolWindow id="MayaLog" anchor="bottom" factoryClass="logconsole.LogWindow" icon="/icons/MayaReCharm_ToolWindow.png"/>
 
-        <configurationType implementation="run.MayaCharmConfigType"/>
-        <programRunner implementation="run.MayaCharmRunner" order="first"/>
-<!--        <programRunner implementation="run.MayaCharmDebugRunner"/>-->
+        <configurationType implementation="run.MayaReCharmConfigType"/>
+        <programRunner implementation="run.MayaReCharmRunner" order="first"/>
+<!--        <programRunner implementation="run.MayaReCharmDebugRunner"/>-->
 
         <xdebugger.attachDebuggerProvider implementation="debugattach.MayaAttachDebuggerProvider"/>
     </extensions>
@@ -32,21 +32,21 @@
 
         <action id="actions.SendBufferAction"
                 class="actions.SendBufferAction"
-                icon="/icons/MayaCharm_Action.png">
+                icon="/icons/MayaReCharm_Action.png">
             <add-to-group group-id="RunMenu" anchor="last"/>
             <keyboard-shortcut keymap="$default" first-keystroke="alt A"/>
         </action>
 
         <action id="actions.SendSelectionAction"
                 class="actions.SendSelectionAction"
-                icon="/icons/MayaCharm_Action.png">
+                icon="/icons/MayaReCharm_Action.png">
             <add-to-group group-id="RunMenu" anchor="last"/>
             <keyboard-shortcut keymap="$default" first-keystroke="alt S"/>
         </action>
 
         <action id="actions.ConnectToMayaLogAction"
                 class="actions.ConnectToMayaLogAction"
-                icon="/icons/MayaCharm_Action.png">
+                icon="/icons/MayaReCharm_Action.png">
             <add-to-group group-id="RunMenu" anchor="last"/>
         </action>
 

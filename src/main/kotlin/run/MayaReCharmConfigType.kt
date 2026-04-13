@@ -8,38 +8,38 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.IconLoader
 import javax.swing.Icon
 
-class MayaCharmConfigType : ConfigurationType {
+class MayaReCharmConfigType : ConfigurationType {
     override fun getDisplayName(): String {
-        return "MayaCharm"
+        return "MayaReCharm"
     }
 
     override fun getConfigurationTypeDescription(): String {
-        return Loc.message("mayacharm.runconfig.ConfigType")
+        return Loc.message("mayarecharm.runconfig.ConfigType")
     }
 
     override fun getIcon(): Icon {
-        return IconLoader.getIcon("/icons/MayaCharm_ToolWindow.png", this::class.java)
+        return IconLoader.getIcon("/icons/MayaReCharm_ToolWindow.png", this::class.java)
     }
 
     override fun getId(): String {
-        return "MAYACHARM_RUN_CONFIGURATION"
+        return "MAYARECHARM_RUN_CONFIGURATION"
     }
 
     override fun getConfigurationFactories(): Array<ConfigurationFactory> {
-        return arrayOf(MayaCharmConfigFactory(this))
+        return arrayOf(MayaReCharmConfigFactory(this))
     }
 }
 
-class MayaCharmConfigFactory(type: MayaCharmConfigType) : ConfigurationFactory(type) {
+class MayaReCharmConfigFactory(type: MayaReCharmConfigType) : ConfigurationFactory(type) {
     override fun createTemplateConfiguration(project: Project): RunConfiguration {
-        return MayaCharmRunConfiguration(project, this, "MayaCharm")
+        return MayaReCharmRunConfiguration(project, this, "MayaReCharm")
     }
 
     override fun getName(): String {
-        return Loc.message("mayacharm.runconfig.ConfigFactory")
+        return Loc.message("mayarecharm.runconfig.ConfigFactory")
     }
 
     override fun getId(): String {
-        return "MAYACHARM_RUN_CONFIGURATION"
+        return "MAYARECHARM_RUN_CONFIGURATION"
     }
 }
