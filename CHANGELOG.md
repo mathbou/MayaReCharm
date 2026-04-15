@@ -1,5 +1,16 @@
 # MayaCharm
 
+## [4.0.0] - 2026-04-13
+### Added
+- Custom dialog for adding Maya Python SDK with auto-detection of Maya installations
+- PyCharm 2026.1 support
+
+### Changed
+- Updated icons for actions and tool windows
+- Refactored log path handling to use system temp directory
+- Upgraded to Gradle 9.4.1, Kotlin 2.3.20, and IntelliJ Platform Plugin 2.14.0
+- Simplified folder chooser descriptor logic and replaced deprecated methods
+
 ## [3.4.0] - 2025-04-20
 ### Added
 - Log console with colored output for warn and debug log levels
@@ -90,6 +101,7 @@
 - Better support for multiple Maya installs
 - Removed dependencies on PyCharm Professional's remote debugger as well as PyCharm Professional
 
+[4.0.0]: https://github.com/mathbou/MayaCharm/releases/tag/v4.0.0
 [3.4.0]: https://github.com/mathbou/MayaCharm/releases/tag/v3.4.0
 [3.3.0]: https://github.com/mathbou/MayaCharm/releases/tag/v3.3.0
 [3.2.7]: https://github.com/cmcpasserby/MayaCharm/releases/tag/v3.2.7
