@@ -7,8 +7,8 @@ def getPyCharmLogger():
     import logging
     import logging.handlers
 
-    appLoggerName = os.environ.get("MAYA_DEFAULT_LOGGER_NAME", "")
-    log = logging.getLogger(appLoggerName + ".PyCharm")
+    app_logger_name = os.environ.get("MAYA_DEFAULT_LOGGER_NAME", "")
+    log = logging.getLogger(app_logger_name + ".PyCharm")
     log.setLevel(logging.DEBUG)
     log.propagate = False
 
