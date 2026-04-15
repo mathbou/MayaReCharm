@@ -14,6 +14,27 @@ import javax.swing.Icon
 
 
 object MayaSdkFlavor : CPythonSdkFlavor<PyFlavorData.Empty>() {
+    fun getYear(path: String): String? {
+        val versionMatch =  Regex("(?i)maya\\s?(\\d{4})").find(path)
+
+        return if (versionMatch != null){
+            versionMatch.groupValues[1]
+        } else {
+            null
+        }
+
+    }
+
+    fun buildSdkName(path: String): String {
+        val year = getYear(path)
+        val pyVersion = getLanguageLevel(path)
+        return if (year != null) {
+            "${MayaSdkFlavor.name} $year $pyVersion"
+        } else {
+            "${MayaSdkFlavor.name} $pyVersion"
+        }
+    }
+
     override fun getName(): String = "MayaPy"
 
     override fun suggestLocalHomePathsImpl(
@@ -71,11 +92,11 @@ object MayaSdkFlavor : CPythonSdkFlavor<PyFlavorData.Empty>() {
 
         for (root in roots) {
             // Direct: <root>/Maya20XX/bin/mayapy.exe
-            scanForMayapy(Path.of(root), "maya", "bin/mayapy.exe", out)
+            scanForMayapy(Path.of(root),  "bin/mayapy.exe", out)
             // Autodesk sub-folder: <root>/Autodesk/Maya20XX/bin/mayapy.exe
             val autodesk = Path.of(root, "Autodesk")
             if (Files.isDirectory(autodesk)) {
-                scanForMayapy(autodesk, "maya", "bin/mayapy.exe", out)
+                scanForMayapy(autodesk,  "bin/mayapy.exe", out)
             }
         }
 
@@ -91,7 +112,7 @@ object MayaSdkFlavor : CPythonSdkFlavor<PyFlavorData.Empty>() {
     private fun discoverLinux(out: MutableList<Path>) {
         val autodesk = Path.of("/usr/autodesk")
         if (Files.isDirectory(autodesk)) {
-            scanForMayapy(autodesk, "maya", "bin/mayapy", out)
+            scanForMayapy(autodesk,  "bin/mayapy", out)
         }
         System.getenv("MAYA_LOCATION")?.let { loc ->
             addIfExists(Path.of(loc, "bin", "mayapy"), out)
@@ -99,11 +120,11 @@ object MayaSdkFlavor : CPythonSdkFlavor<PyFlavorData.Empty>() {
     }
 
     /** List children of [parent] whose name starts with [prefix] (case-insensitive) and check for [relBinary]. */
-    private fun scanForMayapy(parent: Path, prefix: String, relBinary: String, out: MutableList<Path>) {
+    private fun scanForMayapy(parent: Path, relBinary: String, out: MutableList<Path>) {
         if (!Files.isDirectory(parent)) return
         try {
             Files.newDirectoryStream(parent) { entry ->
-                Files.isDirectory(entry) && entry.fileName.toString().lowercase().startsWith(prefix)
+                Files.isDirectory(entry) && entry.fileName.toString().lowercase().startsWith("maya")
             }.use { stream ->
                 for (dir in stream) {
                     addIfExists(dir.resolve(relBinary), out)

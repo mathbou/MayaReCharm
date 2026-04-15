@@ -13,9 +13,13 @@ import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.TextFieldWithBrowseButton
 import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.openapi.util.SystemInfo
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.util.ui.JBUI
+import com.jetbrains.python.sdk.PythonSdkAdditionalData
 import com.jetbrains.python.sdk.PythonSdkType
+import com.jetbrains.python.sdk.flavors.PyFlavorAndData
+import com.jetbrains.python.sdk.flavors.PyFlavorData
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
 import java.awt.event.ItemEvent
@@ -33,8 +37,7 @@ import javax.swing.JPanel
  * (rejects "mayapy.exe" because its regex only accepts python*.exe / pypy*.exe).
  *
  * Instead, we use our own FileChooserDescriptor that filters for mayapy executables,
- * then create the SDK programmatically via SdkConfigurationUtil which validates through
- * PythonSdkFlavor.getFlavor() → MayaSdkFlavor.isValidSdkPath() — which works correctly.
+ * then create the SDK programmatically and attach Maya-specific additional data.
  */
 class MayaSdkAddDialog(private val project: Project) : DialogWrapper(project, false) {
 
@@ -132,10 +135,28 @@ class MayaSdkAddDialog(private val project: Project) : DialogWrapper(project, fa
     override fun doOKAction() {
         val path = pathField.text.trim()
 
-        // Create the SDK programmatically.
-        // SdkConfigurationUtil.createAndAddSDK validates via PythonSdkType.isValidSdkHome()
-        // which calls PythonSdkFlavor.getFlavor(path) → our MayaSdkFlavor.isValidSdkPath()
-        createdSdk = SdkConfigurationUtil.createAndAddSDK(path, PythonSdkType.getInstance())
+        val sdkType = PythonSdkType.getInstance()
+        val allSdks = ProjectJdkTable.getInstance().allJdks.toList()
+
+        // Preserve Maya flavor identity with the non-deprecated PyFlavorAndData constructor.
+        val additionalData = PythonSdkAdditionalData(
+            PyFlavorAndData(PyFlavorData.Empty, MayaSdkFlavor)
+        )
+
+        createdSdk = try {
+            val sdk = SdkConfigurationUtil.createSdk(
+                allSdks,
+                path,
+                sdkType,
+                additionalData,
+                MayaSdkFlavor.buildSdkName(path)
+            )
+            sdkType.setupSdkPaths(sdk)
+            SdkConfigurationUtil.addSdk(sdk)
+            sdk
+        } catch (_: Exception) {
+            null
+        }
 
         if (createdSdk == null) {
             setErrorText(Loc.message("mayarecharm.sdkadd.FailedToCreate"), pathField)
@@ -160,7 +181,7 @@ class MayaSdkAddDialog(private val project: Project) : DialogWrapper(project, fa
             .mapNotNull { it.homePath?.lowercase() }
             .toSet()
 
-        val available = detected.filter { it.toString().lowercase() !in registeredPaths }
+        val available = detected.filter { FileUtil.toSystemIndependentName(it.toString()).lowercase() !in registeredPaths }
 
         if (available.isEmpty()) {
             detectedModel.addElement(DetectedMaya(Loc.message("mayarecharm.sdkadd.NoDetected"), null))
@@ -173,17 +194,12 @@ class MayaSdkAddDialog(private val project: Project) : DialogWrapper(project, fa
     }
 
     /**
-     * Build a human-readable label like "Maya 2025 — C:\Program Files\Autodesk\Maya2025\bin\mayapy.exe"
+     * Build a human-readable label like "Maya 2025 - C:\Program Files\Autodesk\Maya2025\bin\mayapy.exe"
      */
     private fun buildMayaLabel(path: Path): String {
         val pathStr = path.toString()
-        // Try to extract version from path (e.g., "Maya2025")
-        val versionMatch = Regex("(?i)maya\\s?(\\d{4})").find(pathStr)
-        return if (versionMatch != null) {
-            "Maya ${versionMatch.groupValues[1]} \u2014 $pathStr"
-        } else {
-            pathStr
-        }
+        val sdkName = MayaSdkFlavor.buildSdkName(pathStr)
+        return "$sdkName - $pathStr"
     }
 
     /**
