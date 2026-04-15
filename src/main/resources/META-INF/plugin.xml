@@ -15,7 +15,12 @@
         <applicationService serviceImplementation="settings.ApplicationSettings"/>
         <projectConfigurable instance="settings.MayaSdkConfigurable"/>
 
-        <toolWindow id="MayaLog" anchor="bottom" factoryClass="logconsole.LogWindow" icon="/icons/MayaReCharm_ToolWindow.png"/>
+        <toolWindow id="MayaLog"
+                    anchor="bottom"
+                    factoryClass="logconsole.LogWindow"
+                    icon="/icons/MayaReCharm_ToolWindow.png"
+                    canCloseContents="true"
+        />
 
         <configurationType implementation="run.MayaReCharmConfigType"/>
         <programRunner implementation="run.MayaReCharmRunner" order="first"/>
@@ -42,12 +47,6 @@
                 icon="/icons/MayaReCharm_Action.png">
             <add-to-group group-id="RunMenu" anchor="last"/>
             <keyboard-shortcut keymap="$default" first-keystroke="alt S"/>
-        </action>
-
-        <action id="actions.ConnectToMayaLogAction"
-                class="actions.ConnectToMayaLogAction"
-                icon="/icons/MayaReCharm_Action.png">
-            <add-to-group group-id="RunMenu" anchor="last"/>
         </action>
 
     </actions>
