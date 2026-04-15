@@ -30,7 +30,7 @@ repositories {
 dependencies {
     intellijPlatform {
         val version = providers.gradleProperty("platformVersion")
-        pycharm(version, { useInstaller = false })
+        pycharm(version) { useInstaller = false }
 
         pluginVerifier()
 
