@@ -1,6 +1,5 @@
 package settings
 
-import settings.ui.SdkSelector
 import settings.ui.SdkTablePanel
 
 import com.intellij.openapi.options.Configurable
@@ -18,7 +17,6 @@ class MayaSdkConfigurable(project: Project) : SearchableConfigurable, Configurab
     }
 
     private val settings = ApplicationSettings.INSTANCE
-    private val projectSettings = ProjectSettings.getInstance(project)
 
     private val myPanel = JPanel(GridBagLayout()).also {
         it.addAncestorListener(object : AncestorListener {
@@ -33,12 +31,9 @@ class MayaSdkConfigurable(project: Project) : SearchableConfigurable, Configurab
         })
     }
 
-    private val mySdkSelector = SdkSelector()
     private val mySdkPanel = SdkTablePanel(project).also {
         it.changed += {
             ApplicationSettings.INSTANCE.refreshPythonSdks()
-            mySdkSelector.items = settings.mayaSdkMapping.keys.sorted()
-            mySdkSelector.selectedItem = projectSettings.selectedSdkName
         }
     }
 
@@ -50,7 +45,6 @@ class MayaSdkConfigurable(project: Project) : SearchableConfigurable, Configurab
             gridy = 0
 
             fill = GridBagConstraints.HORIZONTAL
-            myPanel.add(mySdkSelector, this)
 
             insets = Insets(2, 2, 0, 2)
             gridy = 1
@@ -79,20 +73,15 @@ class MayaSdkConfigurable(project: Project) : SearchableConfigurable, Configurab
 
     override fun isModified(): Boolean {
         val entries = settings.mayaSdkMapping.values.toSet() != mySdkPanel.data.toSet()
-        val selected = mySdkSelector.selectedItem != projectSettings.selectedSdkName
-        return entries || selected
+        return entries
     }
 
     override fun reset() {
         mySdkPanel.data.clear()
         mySdkPanel.data.addAll(settings.mayaSdkMapping.values.sortedBy { it.mayaPyPath })
-
-        mySdkSelector.items = settings.mayaSdkMapping.keys.sorted()
-        mySdkSelector.selectedItem = projectSettings.selectedSdkName
     }
 
     override fun apply() {
         settings.mayaSdkMapping = mySdkPanel.data.map { it.mayaPyPath to it }.toMap().toMutableMap()
-        projectSettings.selectedSdkName = mySdkSelector.selectedItem
     }
 }
