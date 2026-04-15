@@ -8,6 +8,7 @@ import com.intellij.execution.configurations.RuntimeConfigurationException
 import com.intellij.execution.executors.DefaultDebugExecutor
 import com.intellij.execution.process.impl.ProcessListUtil
 import com.intellij.execution.runners.ExecutionEnvironment
+import com.intellij.openapi.util.IconLoader
 import com.intellij.xdebugger.XDebugProcess
 import com.intellij.xdebugger.XDebugProcessStarter
 import com.intellij.xdebugger.XDebugSession
@@ -55,21 +56,27 @@ class MayaReCharmDebugRunner : PyDebugRunner() {
         val cliState =
             MayaAttachToProcessCliState.create(environment.project, sdk, serverSocket.localPort, process.pid, sdkInfo)
         val executionResult = cliState.execute(environment.executor, this)
+        val icon = IconLoader.getIcon("/icons/MayaReCharm_ToolWindow.png", this::class.java)
 
-        XDebuggerManager.getInstance(environment.project).startSession(environment, object : XDebugProcessStarter() {
-            override fun start(session: XDebugSession): XDebugProcess {
-                val debugProcess = MayaReCharmDebugProcess(
-                    session,
-                    serverSocket,
-                    executionResult.executionConsole,
-                    executionResult.processHandler,
-                    runConfig,
-                    process.pid
-                )
-                debugProcess.positionConverter = PyLocalPositionConverter()
-                createConsoleCommunicationAndSetupActions(environment.project, executionResult, debugProcess, session)
-                return debugProcess
-            }
-        })
+        XDebuggerManager.getInstance(environment.project)
+            .newSessionBuilder(object : XDebugProcessStarter() {
+                override fun start(session: XDebugSession): XDebugProcess {
+                    val debugProcess = MayaReCharmDebugProcess(
+                        session,
+                        serverSocket,
+                        executionResult.executionConsole,
+                        executionResult.processHandler,
+                        runConfig,
+                        process.pid
+                    )
+                    debugProcess.positionConverter = PyLocalPositionConverter()
+                    return debugProcess
+                }
+            })
+            .sessionName(process.pid.toString())
+            .icon(icon)
+            .showTab(true)
+            .startSession()
+            .session
     }
 }
