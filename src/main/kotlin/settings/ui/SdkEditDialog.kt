@@ -8,9 +8,9 @@ import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.ui.EditorTextField
+import com.intellij.util.ui.JBUI
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
-import java.awt.Insets
 import javax.swing.JComponent
 import javax.swing.JLabel
 import javax.swing.JPanel
@@ -61,7 +61,7 @@ class SdkEditDialog(project: Project, private val sdkInfo: ApplicationSettings.S
         init()
 
         with(GridBagConstraints()) {
-            insets = Insets(2, 2, 2, 2)
+            insets = JBUI.insets(2)
             gridx = 0
             gridy = 0
             fill = GridBagConstraints.HORIZONTAL

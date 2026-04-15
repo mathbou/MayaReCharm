@@ -13,26 +13,6 @@ private const val mayaPyExecutableNameMac = "mayapy"
 private const val mayaExecutableNameLinux = "maya"
 private const val mayaPyExecutableNameLinux = "mayapy"
 
-fun mayaPyFromMaya(path: String): String? {
-    val p = Paths.get(path)
-
-    if (p.fileName.toString() != mayaExecutableName) {
-        return null
-    }
-
-    if (SystemInfo.isMac) {
-        val newPath = p.parent.parent.resolve("bin/$mayaPyExecutableNameMac")
-        return if (newPath.exists()) newPath.toString() else null
-    }
-
-    if (SystemInfo.isWindows || SystemInfo.isLinux) {
-        val newPath = p.parent.resolve(mayaPyExecutableName)
-        return if (newPath.exists()) newPath.toString() else null
-    }
-
-    return null
-}
-
 fun mayaFromMayaPy(path: String): String? {
     val p = Paths.get(path)
 

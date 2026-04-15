@@ -2,9 +2,9 @@ package settings.ui
 
 import MayaBundle as Loc
 import com.intellij.openapi.ui.ComboBox
+import com.intellij.util.ui.JBUI
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
-import java.awt.Insets
 import javax.swing.JLabel
 import javax.swing.JPanel
 
@@ -13,7 +13,7 @@ class SdkSelector : JPanel(GridBagLayout()) {
 
     init {
         with(GridBagConstraints()) {
-            insets = Insets(2, 2, 2, 2)
+            insets = JBUI.insets(2)
             gridx = 0
             gridy = 0
             fill = GridBagConstraints.HORIZONTAL
