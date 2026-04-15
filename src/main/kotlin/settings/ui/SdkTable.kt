@@ -15,7 +15,6 @@ import com.intellij.ui.IdeBorderFactory
 import com.intellij.ui.ToolbarDecorator
 import com.intellij.util.ui.UIUtil
 import com.jetbrains.python.sdk.PythonSdkUtil
-import com.jetbrains.python.sdk.flavors.MayaSdkFlavor
 import com.jetbrains.python.sdk.getOrCreateAdditionalData
 import java.awt.BorderLayout
 
@@ -43,7 +42,7 @@ class SdkTablePanel(private val project: Project) :
     override fun addItem(): ApplicationSettings.SdkInfo? {
         val existingSdks = PythonSdkUtil.getAllLocalCPythons().filter {
             !data.map { sdkInfo -> sdkInfo.mayaPyPath }.contains(it.homePath) && it.getOrCreateAdditionalData().run {
-                flavor == MayaSdkFlavor.INSTANCE || flavor == MyMayaSdkFlavor.INSTANCE
+                flavor == MyMayaSdkFlavor
             }
         }
 

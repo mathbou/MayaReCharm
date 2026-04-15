@@ -9,7 +9,7 @@ import com.jetbrains.python.psi.icons.PythonPsiApiIcons
 import java.io.File
 import javax.swing.Icon
 
-class MayaSdkFlavor private constructor() : PythonSdkFlavor<PyFlavorData.Empty>() {
+object MayaSdkFlavor: PythonSdkFlavor<PyFlavorData.Empty>() {
     override fun isValidSdkPath(pathStr: String): Boolean {
         val name = FileUtil.getNameWithoutExtension(pathStr).lowercase()
         return name.startsWith("mayapy") || isMayaFolder(File(pathStr))
@@ -30,17 +30,11 @@ class MayaSdkFlavor private constructor() : PythonSdkFlavor<PyFlavorData.Empty>(
         return path
     }
 
-    companion object {
-        const val verStringPrefix = "Python "
-
-        val INSTANCE: MayaSdkFlavor = MayaSdkFlavor()
-
-        private fun isMayaFolder(file: File): Boolean {
-            return file.isDirectory && file.name == "Maya.app"
-        }
+    private fun isMayaFolder(file: File): Boolean {
+        return file.isDirectory && file.name == "Maya.app"
     }
 }
 
 class MayaFlavorProvider : PythonFlavorProvider {
-    override fun getFlavor(platformIndependent: Boolean): PythonSdkFlavor<PyFlavorData.Empty> = MayaSdkFlavor.INSTANCE
+    override fun getFlavor(platformIndependent: Boolean): MayaSdkFlavor = MayaSdkFlavor
 }
