@@ -24,6 +24,11 @@ object MayaNotifications {
         Loc.message("mayarecharm.notifications.NoSdkSelected"), NotificationType.ERROR
     )
 
+    val INVALID_SDK_SELECTED = Notification(
+        displayGroup, titleText,
+        Loc.message("mayarecharm.notifications.InvalidSdkSelected"), NotificationType.ERROR
+    )
+
     fun mayaInstanceNotFound(instancePath: String, project: Project) {
         Notification(
             displayGroup,
