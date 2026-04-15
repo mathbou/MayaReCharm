@@ -48,6 +48,7 @@ _pycharm_logger = getPyCharmLogger()
 try:
     om.MCommandMessage.removeCallback(_pycharm_logger_callback_id)
 except NameError as e:
-    traceback.print_exception(e)
+    pass
 finally:
     _pycharm_logger_callback_id = om.MCommandMessage.addCommandOutputCallback(writeToTerminal, _pycharm_logger)
+    _pycharm_logger.info("PyCharm logger initialized and callback registered.")
