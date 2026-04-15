@@ -5,6 +5,7 @@ import settings.ui.SdkTablePanel
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.SearchableConfigurable
 import com.intellij.openapi.project.Project
+import com.intellij.util.ui.JBUI
 import java.awt.*
 import javax.swing.JComponent
 import javax.swing.JPanel
@@ -39,14 +40,14 @@ class MayaSdkConfigurable(project: Project) : SearchableConfigurable, Configurab
 
     init {
         with(GridBagConstraints()) {
-            insets = Insets(2, 2, 2, 2)
+            insets = JBUI.insets(2)
             weightx = 1.0
             gridx = 0
             gridy = 0
 
             fill = GridBagConstraints.HORIZONTAL
 
-            insets = Insets(2, 2, 0, 2)
+            insets = JBUI.insets(2, 2, 0, 2)
             gridy = 1
             weighty = 1.0
             gridheight = GridBagConstraints.RELATIVE
@@ -82,6 +83,6 @@ class MayaSdkConfigurable(project: Project) : SearchableConfigurable, Configurab
     }
 
     override fun apply() {
-        settings.mayaSdkMapping = mySdkPanel.data.map { it.mayaPyPath to it }.toMap().toMutableMap()
+        settings.mayaSdkMapping = mySdkPanel.data.associateBy { it.mayaPyPath }.toMutableMap()
     }
 }
