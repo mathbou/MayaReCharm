@@ -1,51 +1,30 @@
-from __future__ import print_function
+from __future__ import annotations
+
+import argparse
 import sys
-import os
 import socket
+from pathlib import Path
+from typing import Any
 
+def process_command_line() -> dict[str, Any]:
+    parser = argparse.ArgumentParser(add_help=False)
+    parser.add_argument("pid", type=int)
+    parser.add_argument("pydevPath", type=Path)
+    parser.add_argument("--port", type=int, default=5678)
+    parser.add_argument("--host", default="127.0.0.1")
+    parser.add_argument("--protocol", default="")
+    parser.add_argument("--mcPort", type=int, required=True)
 
-def process_command_line(argv):
-    setup = {}
-    setup['port'] = 5678  # Default port for PyDev remote debugger
-    setup['pid'] = 0
-    setup['host'] = '127.0.0.1'
-    setup['protocol'] = ''
+    args = parser.parse_args()
+    setup = {
+        "port": args.port,
+        "pid": args.pid,
+        "host": args.host,
+        "protocol": args.protocol,
+        "mcPort": args.mcPort,
+        "pydevPath": args.pydevPath,
+    }
 
-    i = 0
-    while i < len(argv):
-        if argv[i] == '--port':
-            del argv[i]
-            setup['port'] = int(argv[i])
-            del argv[i]
-
-        elif argv[i] == '--pid':
-            del argv[i]
-            setup['pid'] = int(argv[i])
-            del argv[i]
-
-        elif argv[i] == '--host':
-            del argv[i]
-            setup['host'] = argv[i]
-            del argv[i]
-
-        elif argv[i] == '--protocol':
-            del argv[i]
-            setup['protocol'] = argv[i]
-            del argv[i]
-
-        elif argv[i] == '--mcPort':
-            del argv[i]
-            setup['mcPort'] = int(argv[i])
-            del argv[i]
-
-        elif argv[i] == '--pydevPath':
-            del argv[i]
-            setup['pydevPath'] = argv[i]
-            del argv[i]
-
-    if not setup['pid']:
-        sys.stderr.write('Expected --pid to be passed.\n')
-        sys.exit(1)
     return setup
 
 
@@ -61,7 +40,6 @@ def send_command(port, message):
         client.close()
 
 
-def main(setup):
     if sys.platform == 'win32':
         setup['pythonpath'] = setup['pydevPath'].replace("\\", "/")
         setup['pythonpath2'] = setup['pydevPath'].replace("\\", "/") + "/pydevd_attach_to_process"
@@ -81,10 +59,14 @@ sys.path.append("%(pythonpath2)s");
 import attach_script;
 attach_script.attach(port=%(port)s, host="%(host)s");
 '''.replace('\r\n', '').replace('\r', '').replace('\n', '')
+def build_python_code(setup: dict[str, Any]) -> str:
 
-    python_code = python_code % setup
-    send_command(setup['mcPort'], python_code)
+    return python_code % setup
+
+def main():
+    setup = process_command_line()
+    send_command(setup["mcPort"], build_python_code(setup))
 
 
-if __name__ == '__main__':
-    main(process_command_line(sys.argv[1:]))
+if __name__ == "__main__":
+    main()
