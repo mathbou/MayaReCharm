@@ -12,9 +12,9 @@ import com.jetbrains.python.debugger.attach.PyAttachToProcessCommandLineState
 import com.jetbrains.python.run.PythonConfigurationType
 import com.jetbrains.python.run.PythonRunConfiguration
 import com.jetbrains.python.run.PythonScriptCommandLineState
-import com.jetbrains.python.sdk.PythonEnvUtil
 import settings.ApplicationSettings
 import settings.ProjectSettings
+import java.io.File
 import java.nio.file.Paths
 
 class MayaAttachToProcessCliState(runConfig: PythonRunConfiguration, env: ExecutionEnvironment) :
@@ -30,7 +30,11 @@ class MayaAttachToProcessCliState(runConfig: PythonRunConfiguration, env: Execut
             val mcPort = mayaSdk.port
             val debuggerPath = PythonHelper.DEBUGGER.pythonPathEntry
 
-            PythonEnvUtil.addToPythonPath(conf.envs, listOf(env.project.basePath))
+            env.project.basePath?.let { basePath ->
+                val existing = conf.envs["PYTHONPATH"]
+                conf.envs["PYTHONPATH"] = if (existing.isNullOrEmpty()) basePath
+                                          else "$existing${File.pathSeparator}$basePath"
+            }
 
             conf.workingDirectory = env.project.basePath
             conf.sdkHome = sdk.homePath

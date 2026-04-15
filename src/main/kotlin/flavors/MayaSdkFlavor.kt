@@ -4,7 +4,6 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.util.IconLoader
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.UserDataHolder
-import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.python.sdk.flavors.CPythonSdkFlavor
 import com.jetbrains.python.sdk.flavors.PyFlavorData
 import com.jetbrains.python.sdk.flavors.PythonFlavorProvider
@@ -13,25 +12,9 @@ import java.nio.file.Files
 import java.nio.file.Path
 import javax.swing.Icon
 
-object MayaSdkFlavor: CPythonSdkFlavor<PyFlavorData.Empty>() {
-    fun isValidMayapyPath(pathStr: String): Boolean = isValidSdkPath(pathStr)
 
-    fun discoverMayaInstallations(): Collection<Path> {
-        val results = mutableListOf<Path>()
-        try {
-            if (SystemInfo.isWindows) discoverWindows(results)
-            else if (SystemInfo.isLinux) discoverLinux(results)
-        } catch (_: Exception) {
-            // never let a scan failure propagate
-        }
-        return results
-    }
-
-    override fun getName(): String {
-        return "Maya Python"
-    }
-
-    // ── Auto-detection of Maya installations ─────────────────────────────
+object MayaSdkFlavor : CPythonSdkFlavor<PyFlavorData.Empty>() {
+    override fun getName(): String = "MayaPy"
 
     override fun suggestLocalHomePathsImpl(
         module: Module?,
@@ -39,7 +22,7 @@ object MayaSdkFlavor: CPythonSdkFlavor<PyFlavorData.Empty>() {
     ): Collection<Path> {
         val results = mutableListOf<Path>()
         try {
-            if (SystemInfo.isWindows) discoverWindows(results)
+            if (SystemInfo.isWindows) discoverWindows(results )
             else if (SystemInfo.isLinux) discoverLinux(results)
         } catch (_: Exception) {
             // never let a scan failure propagate
@@ -49,30 +32,12 @@ object MayaSdkFlavor: CPythonSdkFlavor<PyFlavorData.Empty>() {
 
     // ── Flavor validation ────────────────────────────────────────────────
 
-    override fun isValidSdkPath(pathStr: String): Boolean {
+    fun isValidMayaSdkPath(pathStr: String): Boolean {
         val file = File(pathStr)
         return isMayapyExecutable(file) || (file.isDirectory && findMayapyInDirectory(file) != null)
     }
 
     override fun getIcon(): Icon = IconLoader.getIcon("/icons/MayaReCharm_Action.png", this::class.java)
-
-    override fun getSdkPath(path: VirtualFile): VirtualFile? {
-        if (!path.isDirectory) {
-            return path.takeIf { isMayapyExecutable(File(it.path)) }
-        }
-
-        val candidates = listOf(
-            "mayapy.exe",
-            "mayapy",
-            "bin/mayapy.exe",
-            "bin/mayapy",
-            "Contents/bin/mayapy"
-        )
-
-        return candidates.mapNotNull { path.findFileByRelativePath(it) }
-            .firstOrNull { !it.isDirectory }
-            ?: path
-    }
 
     override fun getFlavorDataClass(): Class<PyFlavorData.Empty> = PyFlavorData.Empty::class.java
 
@@ -151,6 +116,17 @@ object MayaSdkFlavor: CPythonSdkFlavor<PyFlavorData.Empty>() {
 
     private fun addIfExists(path: Path, out: MutableList<Path>) {
         if (Files.isRegularFile(path)) out.add(path)
+    }
+
+    fun discoverMayaInstallations(): Collection<Path> {
+        val results = mutableListOf<Path>()
+        try {
+            if (SystemInfo.isWindows) discoverWindows(results)
+            else if (SystemInfo.isLinux) discoverLinux(results)
+        } catch (_: Exception) {
+            // never let a scan failure propagate
+        }
+        return results
     }
 }
 

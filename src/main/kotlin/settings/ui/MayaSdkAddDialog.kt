@@ -114,7 +114,7 @@ class MayaSdkAddDialog(private val project: Project) : DialogWrapper(project, fa
             return ValidationInfo(Loc.message("mayarecharm.sdkadd.PathNotFound"), pathField)
         }
 
-        if (!MayaSdkFlavor.isValidMayapyPath(path)) {
+        if (!MayaSdkFlavor.isValidMayaSdkPath(path)) {
             return ValidationInfo(Loc.message("mayarecharm.sdkadd.NotMayapy"), pathField)
         }
 
