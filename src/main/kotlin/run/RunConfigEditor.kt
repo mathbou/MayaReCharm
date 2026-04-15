@@ -23,12 +23,9 @@ class RunConfigEditor(config: MayaReCharmRunConfiguration) : SettingsEditor<Maya
         JRadioButton(Loc.message("mayarecharm.configedit.ExecuteFile"), true).apply { update(this) }
     private val fileField = TextFieldWithBrowseButton().apply {
         val fileTypeFilter = FileChooserDescriptor(true, false, false, false, false, false)
-        addBrowseFolderListener(
-            Loc.message("mayarecharm.configedit.SelectFile"),
-            Loc.message("mayarecharm.configedit.SelectFileLong"),
-            config.project,
-            fileTypeFilter
-        )
+            .withTitle(Loc.message("mayarecharm.configedit.SelectFile"))
+            .withDescription(Loc.message("mayarecharm.configedit.SelectFileLong"))
+        addBrowseFolderListener(config.project, fileTypeFilter)
     }
 
     private val codeRadioButton = JRadioButton(Loc.message("mayarecharm.configedit.ExecuteCode")).apply { update(this) }

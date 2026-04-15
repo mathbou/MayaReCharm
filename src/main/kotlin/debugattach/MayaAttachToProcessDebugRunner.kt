@@ -10,7 +10,6 @@ import com.intellij.xdebugger.XDebugProcess
 import com.intellij.xdebugger.XDebugProcessStarter
 import com.intellij.xdebugger.XDebugSession
 import com.intellij.xdebugger.XDebuggerManager
-import com.jetbrains.python.debugger.PyDebugRunner
 import com.jetbrains.python.debugger.PyLocalPositionConverter
 import com.jetbrains.python.debugger.attach.PyAttachToProcessDebugRunner
 import run.MayaReCharmDebugProcess
@@ -53,7 +52,7 @@ class MayaAttachToProcessDebugRunner(
         val icon = IconLoader.getIcon("/icons/MayaReCharm_ToolWindow.png", this::class.java)
 
         return XDebuggerManager.getInstance(project)
-            .startSessionAndShowTab(pid.toString(), icon, null, false, object : XDebugProcessStarter() {
+            .newSessionBuilder(object : XDebugProcessStarter() {
                 override fun start(dSession: XDebugSession): XDebugProcess {
                     val process = MayaReCharmDebugProcess(
                         dSession,
@@ -64,9 +63,13 @@ class MayaAttachToProcessDebugRunner(
                         pid
                     )
                     process.positionConverter = PyLocalPositionConverter()
-                    PyDebugRunner.createConsoleCommunicationAndSetupActions(project, result, process, dSession)
                     return process
                 }
             })
+            .sessionName(pid.toString())
+            .icon(icon)
+            .showTab(true)
+            .startSession()
+            .session
     }
 }
