@@ -9,6 +9,7 @@ import java.io.File
 import java.nio.file.Path
 import java.nio.file.Paths
 
+@Service(Service.Level.PROJECT)
 @State(
     name = "MCProjectSettings",
     storages = [Storage(value = StoragePathMacros.WORKSPACE_FILE)]
