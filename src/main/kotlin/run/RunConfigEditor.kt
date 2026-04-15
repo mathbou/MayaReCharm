@@ -8,9 +8,9 @@ import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.openapi.options.SettingsEditor
 import com.intellij.openapi.ui.TextFieldWithBrowseButton
 import com.intellij.ui.EditorTextField
+import com.intellij.util.ui.JBUI
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
-import java.awt.Insets
 import javax.swing.*
 
 class RunConfigEditor(config: MayaReCharmRunConfiguration) : SettingsEditor<MayaReCharmRunConfiguration>() {
@@ -36,7 +36,7 @@ class RunConfigEditor(config: MayaReCharmRunConfiguration) : SettingsEditor<Maya
 
     init {
         with(GridBagConstraints()) {
-            insets = Insets(2, 2, 2, 2)
+            insets = JBUI.insets(2)
             gridx = 0
             gridy = 0
             fill = GridBagConstraints.HORIZONTAL
