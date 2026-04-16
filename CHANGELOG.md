@@ -1,5 +1,16 @@
 # MayaReCharm
 
+## [4.1.0] - 2026-04-16
+### Changed
+- Refactored attach/debug plumbing and modernized `attach_pydevd.py` argument parsing
+- Refined Maya SDK naming/detection helpers and send-action SDK resolution
+- Improved Maya log wiring and open-log script behavior with cleaner initialization output
+- Updated settings UI/layout internals and project service wiring cleanup
+- Clarified `scanForMayapy` documentation for Maya directory matching
+
+### Fixed
+- Additional plugin verifier compatibility cleanups
+
 ## [4.0.0] - 2026-04-13
 ### Added
 - Custom dialog for adding Maya Python SDK with auto-detection of Maya installations
@@ -101,6 +112,7 @@
 - Better support for multiple Maya installs
 - Removed dependencies on PyCharm Professional's remote debugger as well as PyCharm Professional
 
+[4.1.0]: https://github.com/mathbou/MayaReCharm/releases/tag/v4.1.0
 [4.0.0]: https://github.com/mathbou/MayaReCharm/releases/tag/v4.0.0
 [3.4.0]: https://github.com/mathbou/MayaReCharm/releases/tag/v3.4.0
 [3.3.0]: https://github.com/mathbou/MayaReCharm/releases/tag/v3.3.0
