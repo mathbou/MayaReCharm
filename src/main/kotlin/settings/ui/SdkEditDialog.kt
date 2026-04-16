@@ -18,7 +18,11 @@ import javax.swing.JTextField
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
 
-class SdkEditDialog(project: Project, private val sdkInfo: ApplicationSettings.SdkInfo) :
+class SdkEditDialog(
+    project: Project,
+    private val sdkInfo: ApplicationSettings.SdkInfo,
+    private val usedPorts: Set<Int>
+) :
     DialogWrapper(project, false) {
     private val myPanel = JPanel(GridBagLayout())
     private val nameField = JTextField().apply {
@@ -107,7 +111,7 @@ class SdkEditDialog(project: Project, private val sdkInfo: ApplicationSettings.S
         get() = if (isOK) ApplicationSettings.SdkInfo(sdkInfo.mayaPyPath, portField.text.toInt()) else sdkInfo
 
     private fun updateSetupText() {
-        setupText.text = PythonStrings.CMDPORTSETUPSCRIPT.getResource(portField.text.toInt())
+        setupText.text = PythonStrings.CMDPORTSETUPSCRIPT.getResource(portField.text.toIntOrNull() ?: sdkInfo.port)
     }
 
     private fun isModified(): Boolean {
@@ -115,7 +119,12 @@ class SdkEditDialog(project: Project, private val sdkInfo: ApplicationSettings.S
         return sdkInfo != ApplicationSettings.SdkInfo(sdkInfo.mayaPyPath, port)
     }
 
+    private fun isPortAvailable(): Boolean {
+        val port = portField.text.toIntOrNull() ?: return false
+        return port !in usedPorts
+    }
+
     private fun updateOkButton() {
-        isOKActionEnabled = isModified()
+        isOKActionEnabled = isModified() && isPortAvailable()
     }
 }

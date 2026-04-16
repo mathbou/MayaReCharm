@@ -13,6 +13,7 @@ import com.intellij.ui.AddEditRemovePanel
 import com.intellij.ui.IdeBorderFactory
 import com.intellij.ui.ToolbarDecorator
 import com.intellij.util.ui.UIUtil
+import logconsole.closeSdkTab
 import java.awt.BorderLayout
 
 private class SdkTableModel : AddEditRemovePanel.TableModel<ApplicationSettings.SdkInfo>() {
@@ -64,10 +65,25 @@ class SdkTablePanel(private val project: Project) :
     }
 
     override fun editItem(o: ApplicationSettings.SdkInfo): ApplicationSettings.SdkInfo {
-        val dialog = SdkEditDialog(project, o)
+        val usedPorts = data
+            .asSequence()
+            .filter { it.mayaPyPath != o.mayaPyPath }
+            .map { it.port }
+            .toSet()
+
+        val dialog = SdkEditDialog(project, o, usedPorts)
         dialog.show()
-        onChanged(this)
-        return dialog.result
+        if (!dialog.isOK) {
+            return o
+        }
+
+        val edited = dialog.result
+        if (edited != o) {
+            closeSdkTab(project, o.mayaPyPath)
+            onChanged(this)
+        }
+
+        return edited
     }
 
     override fun initPanel() {

@@ -15,6 +15,7 @@ import com.intellij.openapi.util.Key
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
 import com.intellij.openapi.wm.ex.ToolWindowEx
+import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.content.Content
@@ -28,9 +29,18 @@ import java.io.File
 import java.nio.charset.Charset
 import java.awt.event.MouseEvent
 
-class LogWindow : ToolWindowFactory, DumbAware {
-    private val sdkPathKey = Key.create<String>("MayaReCharm.LogWindow.sdkPath")
+private const val MAYA_LOG_TOOL_WINDOW_ID = "MayaLog"
+private val sdkPathKey = Key.create<String>("MayaReCharm.LogWindow.sdkPath")
 
+fun closeSdkTab(project: Project, sdkPath: String): Boolean {
+    val toolWindow = ToolWindowManager.getInstance(project).getToolWindow(MAYA_LOG_TOOL_WINDOW_ID) ?: return false
+    val contentManager = toolWindow.contentManager
+    val contentToClose = contentManager.contents.firstOrNull { it.getUserData(sdkPathKey) == sdkPath } ?: return false
+    contentManager.removeContent(contentToClose, true)
+    return true
+}
+
+class LogWindow : ToolWindowFactory, DumbAware {
     override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
         val projectSettings = ProjectSettings.getInstance(project)
         val contentManager = toolWindow.contentManager
