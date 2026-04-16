@@ -17,7 +17,11 @@ import java.nio.file.Paths
 class ProjectSettings(val project: Project) : PersistentStateComponent<ProjectSettings.State> {
     private val appSettings = ApplicationSettings.INSTANCE
 
-    data class State(var selectedSdk: String? = null)
+    data class State(
+        var selectedSdk: String? = null,
+        var openLogSdkPaths: MutableList<String>? = null,
+        var selectedLogSdk: String? = null
+    )
 
     private var myState = State()
 
@@ -33,12 +37,26 @@ class ProjectSettings(val project: Project) : PersistentStateComponent<ProjectSe
 
     override fun loadState(state: State) {
         myState.selectedSdk = state.selectedSdk
+        myState.openLogSdkPaths = state.openLogSdkPaths?.distinct()?.toMutableList()
+        myState.selectedLogSdk = state.selectedLogSdk
     }
 
     var selectedSdkName: String?
         get() = myState.selectedSdk ?: appSettings.mayaSdkMapping.keys.maxOrNull()
         set(value) {
             myState.selectedSdk = value
+        }
+
+    var openLogSdkPaths: List<String>?
+        get() = myState.openLogSdkPaths?.filter { it in appSettings.mayaSdkMapping }
+        set(value) {
+            myState.openLogSdkPaths = value?.distinct()?.toMutableList()
+        }
+
+    var selectedLogSdkPath: String?
+        get() = myState.selectedLogSdk?.takeIf { it in appSettings.mayaSdkMapping }
+        set(value) {
+            myState.selectedLogSdk = value
         }
 
     val selectedSdk: ApplicationSettings.SdkInfo?

@@ -19,6 +19,8 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.ui.content.Content
 import com.intellij.ui.content.ContentManager
+import com.intellij.ui.content.ContentManagerEvent
+import com.intellij.ui.content.ContentManagerListener
 import com.intellij.ui.content.ContentFactory
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import flavors.MayaSdkFlavor
@@ -31,24 +33,32 @@ class LogWindow : ToolWindowFactory, DumbAware {
 
     override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
         val projectSettings = ProjectSettings.getInstance(project)
-        val selectedSdkPath = projectSettings.selectedSdkName
-
         val contentManager = toolWindow.contentManager
         val sdkEntries = getSortedSdkEntries()
+        val sdkByPath = sdkEntries.associateBy { it.key }
+        val initialOpenSdkPaths = getInitialOpenSdkPaths(projectSettings, sdkByPath)
+        val initiallySelectedSdkPath = when {
+            projectSettings.selectedLogSdkPath in initialOpenSdkPaths -> projectSettings.selectedLogSdkPath
+            projectSettings.selectedSdkName in initialOpenSdkPaths -> projectSettings.selectedSdkName
+            else -> initialOpenSdkPaths.firstOrNull()
+        }
 
         var selectedContent: Content? = null
         var selectedConsole: LogConsole? = null
 
-        for ((sdkPath, sdkInfo) in sdkEntries) {
+        for (sdkPath in initialOpenSdkPaths) {
+            val sdkInfo = sdkByPath[sdkPath]?.value ?: continue
             val (content, console) = addSdkTab(project, contentManager, sdkPath, sdkInfo, select = false)
 
-            if (selectedSdkPath != null && selectedSdkPath == sdkPath) {
+            if (initiallySelectedSdkPath != null && initiallySelectedSdkPath == sdkPath) {
                 selectedContent = content
                 selectedConsole = console
             }
         }
 
         selectedContent?.let(contentManager::setSelectedContent)
+        registerTabStatePersistence(projectSettings, contentManager)
+        persistTabState(projectSettings, contentManager)
 
         val reopenAction = ReopenLogTabAction(project, toolWindow)
         (toolWindow as? ToolWindowEx)?.setTabActions(reopenAction)
@@ -63,6 +73,19 @@ class LogWindow : ToolWindowFactory, DumbAware {
     private fun getSortedSdkEntries(): List<Map.Entry<String, ApplicationSettings.SdkInfo>> {
         return ApplicationSettings.INSTANCE.mayaSdkMapping.entries
             .sortedWith(compareBy<Map.Entry<String, ApplicationSettings.SdkInfo>> { it.value.port }.thenBy { it.key })
+    }
+
+    private fun getInitialOpenSdkPaths(
+        projectSettings: ProjectSettings,
+        sdkByPath: Map<String, Map.Entry<String, ApplicationSettings.SdkInfo>>
+    ): List<String> {
+        val restoredOpenTabs = projectSettings.openLogSdkPaths?.filter { it in sdkByPath }
+        if (restoredOpenTabs != null) {
+            return restoredOpenTabs
+        }
+
+        return listOfNotNull(projectSettings.selectedSdkName)
+            .filter { it in sdkByPath }
     }
 
     private fun addSdkTab(
@@ -89,6 +112,33 @@ class LogWindow : ToolWindowFactory, DumbAware {
 
     private fun isSdkTabOpen(contentManager: ContentManager, sdkPath: String): Boolean {
         return contentManager.contents.any { it.getUserData(sdkPathKey) == sdkPath }
+    }
+
+    private fun registerTabStatePersistence(projectSettings: ProjectSettings, contentManager: ContentManager) {
+        contentManager.addContentManagerListener(object : ContentManagerListener {
+            override fun contentAdded(event: ContentManagerEvent) {
+                persistTabState(projectSettings, contentManager)
+            }
+
+            override fun contentRemoved(event: ContentManagerEvent) {
+                persistTabState(projectSettings, contentManager)
+            }
+
+            override fun selectionChanged(event: ContentManagerEvent) {
+                persistTabState(projectSettings, contentManager)
+            }
+        })
+    }
+
+    private fun persistTabState(projectSettings: ProjectSettings, contentManager: ContentManager) {
+        val openSdkPaths = contentManager.contents
+            .mapNotNull { it.getUserData(sdkPathKey) }
+            .filter { it in ApplicationSettings.INSTANCE.mayaSdkMapping }
+
+        projectSettings.openLogSdkPaths = openSdkPaths
+        projectSettings.selectedLogSdkPath = contentManager.selectedContent
+            ?.getUserData(sdkPathKey)
+            ?.takeIf { it in openSdkPaths }
     }
 
     private fun createConsole(project: Project, port: Int): LogConsole {
