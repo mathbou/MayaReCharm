@@ -119,7 +119,7 @@ object MayaSdkFlavor : CPythonSdkFlavor<PyFlavorData.Empty>() {
         }
     }
 
-    /** List children of [parent] whose name starts with [prefix] (case-insensitive) and check for [relBinary]. */
+    /** List children of `parent` whose name starts with `maya` (case-insensitive) and check for `relBinary`. */
     private fun scanForMayapy(parent: Path, relBinary: String, out: MutableList<Path>) {
         if (!Files.isDirectory(parent)) return
         try {
