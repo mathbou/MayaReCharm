@@ -21,8 +21,8 @@ class ApplicationSettings : PersistentStateComponent<ApplicationSettings.State> 
         val mayaPath: String
             get() = mayaFromMayaPy(mayaPyPath) ?: ""
 
-        val sdk: Sdk?
-            get() = INSTANCE.findByPath(mayaPyPath)
+        val sdk: Sdk
+            get() = INSTANCE.findByPath(mayaPyPath)!!
     }
 
     data class State(var mayaSdkMapping: SdkPortMap = mutableMapOf())

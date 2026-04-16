@@ -3,7 +3,6 @@ package debugattach
 import MayaBundle as Loc
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.IconLoader
 import com.intellij.xdebugger.XDebugProcess
@@ -20,9 +19,8 @@ import java.net.ServerSocket
 class MayaAttachToProcessDebugRunner(
     private val project: Project,
     private val pid: Int,
-    private val sdk: Sdk?,
     private val mayaSdk: ApplicationSettings.SdkInfo
-) : PyAttachToProcessDebugRunner(project, pid, sdk) {
+) : PyAttachToProcessDebugRunner(project, pid, mayaSdk.sdk) {
 
     override fun launch(): XDebugSession? {
         FileDocumentManager.getInstance().saveAllDocuments()
@@ -46,7 +44,7 @@ class MayaAttachToProcessDebugRunner(
 
     private fun launchRemoteDebugServer(): XDebugSession? {
         val serverSocket = getDebuggerSocket() ?: return null
-        val state = MayaAttachToProcessCliState.create(project, sdk!!, serverSocket.localPort, pid, mayaSdk)
+        val state = MayaAttachToProcessCliState.create(project, serverSocket.localPort, pid, mayaSdk)
         val result = state.execute(state.environment.executor, this)
 
         val icon = IconLoader.getIcon("/icons/MayaReCharm_ToolWindow.png", this::class.java)
@@ -59,7 +57,7 @@ class MayaAttachToProcessDebugRunner(
                         serverSocket,
                         result.executionConsole,
                         result.processHandler,
-                        null,
+                        mayaSdk.port,
                         pid
                     )
                     process.positionConverter = PyLocalPositionConverter()

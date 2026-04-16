@@ -2,7 +2,6 @@ package run
 
 import MayaBundle as Loc
 import mayacomms.MayaCommandInterface
-import settings.ApplicationSettings
 import com.intellij.execution.process.ProcessHandler
 import com.intellij.execution.ui.ConsoleViewContentType
 import com.intellij.execution.ui.ExecutionConsole
@@ -16,14 +15,10 @@ class MayaReCharmDebugProcess(
     serverSocket: ServerSocket,
     executionConsole: ExecutionConsole,
     processHandler: ProcessHandler?,
-    private val runConfig: MayaReCharmRunConfiguration?,
+    port: Int,
     private val pid: Int
 ) : PyDebugProcess(session, serverSocket, executionConsole, processHandler, false) {
-    // TODO maybe the maya sdk should be passed in here as well
-    private val mayaCommand = runConfig?.mayaSdkPath?.let {
-        val port = ApplicationSettings.INSTANCE.mayaSdkMapping[it]?.port ?: return@let null
-        MayaCommandInterface(port)
-    }
+    private val mayaCommand = MayaCommandInterface(port)
 
     override fun getConnectionMessage(): String {
         return Loc.message("mayarecharm.debugproc.ConnectionMessage", pid.toString())
@@ -38,18 +33,10 @@ class MayaReCharmDebugProcess(
             printToConsole(Loc.message("mayarecharm.debugproc.FailedToConnect"), ConsoleViewContentType.SYSTEM_OUTPUT)
             return
         }
-
-        runConfig ?: return
-        mayaCommand ?: return
-
-        when (runConfig.executionType) {
-            ExecutionType.FILE -> mayaCommand.sendFileToMaya(runConfig.scriptFilePath)
-            ExecutionType.CODE -> mayaCommand.sendCodeToMaya(runConfig.scriptCodeText)
-        }
     }
 
     override fun disconnect() {
         super.disconnect()
-        mayaCommand?.sendCodeToMaya(PythonStrings.STOPTRACE.message)
+        mayaCommand.sendCodeToMaya(PythonStrings.STOPTRACE.message)
     }
 }

@@ -20,7 +20,7 @@ import java.nio.file.Paths
 class MayaAttachToProcessCliState(runConfig: PythonRunConfiguration, env: ExecutionEnvironment) :
     PythonScriptCommandLineState(runConfig, env) {
     companion object {
-        fun create(project: Project, sdk: Sdk, port: Int, pid: Int, mayaSdk: ApplicationSettings.SdkInfo): MayaAttachToProcessCliState {
+        fun create(project: Project, port: Int, pid: Int, mayaSdk: ApplicationSettings.SdkInfo): MayaAttachToProcessCliState {
             val conf =
                 PythonConfigurationType.getInstance().factory.createTemplateConfiguration(project) as PythonRunConfiguration
             val env = ExecutionEnvironmentBuilder.create(project, DefaultDebugExecutor.getDebugExecutorInstance(), conf)
@@ -37,7 +37,7 @@ class MayaAttachToProcessCliState(runConfig: PythonRunConfiguration, env: Execut
             }
 
             conf.workingDirectory = env.project.basePath
-            conf.sdkHome = sdk.homePath
+            conf.sdkHome = mayaSdk.sdk.homePath
             conf.isUseModuleSdk = false
             conf.scriptName = Paths.get(projectSettings.pythonCachePath.toString(), "attach_pydevd.py").toString()
             conf.scriptParameters = "$pid \"$debuggerPath\" --port $port --mcPort $mcPort"

@@ -21,10 +21,6 @@
                     canCloseContents="true"
         />
 
-        <configurationType implementation="run.MayaReCharmConfigType"/>
-        <programRunner implementation="run.MayaReCharmRunner" order="first"/>
-        <programRunner implementation="run.MayaReCharmDebugRunner"/>
-
         <xdebugger.attachDebuggerProvider implementation="debugattach.MayaAttachDebuggerProvider"/>
     </extensions>
 

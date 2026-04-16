@@ -34,27 +34,22 @@ class MayaAttachDebuggerProvider : XAttachDebuggerProvider {
         mayaPathMap[processInfo.pid] = currentSdk.mayaPath
         userData.putUserData(mayaPathsKey, mayaPathMap)
 
-        val sdk = currentSdk.sdk
-        if (sdk != null) {
-            return mutableListOf(MayaAttachDebugger(sdk, currentSdk))
-        }
-        return mutableListOf()
+        return mutableListOf(MayaAttachDebugger(currentSdk))
     }
 
     override fun isAttachHostApplicable(attachHost: XAttachHost): Boolean = attachHost is LocalAttachHost
 }
 
-private class MayaAttachDebugger(sdk: Sdk, private val mayaSdk: ApplicationSettings.SdkInfo) : XAttachDebugger {
-    private val mySdk: Sdk = sdk
-    private val mySdkHome: String? = sdk.homePath
-    private val myName: String = "${PythonSdkType.getInstance().getVersionString(sdk)} ($mySdkHome)"
+private class MayaAttachDebugger(private val mayaSdk: ApplicationSettings.SdkInfo) : XAttachDebugger {
+    private val mySdkHome: String? = mayaSdk.sdk.homePath
+    private val myName: String = "${PythonSdkType.getInstance().getVersionString(mayaSdk.sdk)} ($mySdkHome)"
 
     override fun getDebuggerDisplayName(): String {
         return myName
     }
 
     override fun attachDebugSession(project: Project, attachHost: XAttachHost, processInfo: ProcessInfo) {
-        val runner = MayaAttachToProcessDebugRunner(project, processInfo.pid, mySdk, mayaSdk)
+        val runner = MayaAttachToProcessDebugRunner(project, processInfo.pid, mayaSdk)
         runner.launch()
     }
 }
