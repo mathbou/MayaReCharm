@@ -15,10 +15,15 @@ import com.intellij.openapi.actionSystem.Constraints
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.colors.EditorColorsManager
+import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.actionSystem.LangDataKeys
+import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.IconLoader
 import com.intellij.openapi.util.io.FileUtilRt
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -243,7 +248,7 @@ class ConnectToMayaLogAction(
 ) : AnAction(
     Loc.message("mayarecharm.action.ConnectLogText"),
     Loc.message("mayarecharm.action.ConnectLogDescription"),
-    IconLoader.getIcon("/icons/MayaReCharm_Action.png", ConnectToMayaLogAction::class.java)
+    IconLoader.getIcon("/icons/MayaReCharm_link16.png", ConnectToMayaLogAction::class.java)
 ) {
 
     override fun actionPerformed(e: AnActionEvent) {
@@ -251,6 +256,35 @@ class ConnectToMayaLogAction(
         logConsole.reloadLogFile()
     }
 }
+
+class SendBufferLogAction(
+    private val port: Int
+): AnAction(
+    Loc.message("mayarecharm.action.SendDocumentText"),
+    Loc.message("mayarecharm.action.SendDocumentDescription"),
+    IconLoader.getIcon("/icons/MayaReCharm_Action.png", SendBufferLogAction::class.java)
+) {
+    override fun actionPerformed(e: AnActionEvent) {
+        val data = getTargetFile(e) ?: return
+
+        val fileTypeManager = FileTypeManager.getInstance()
+        val pyFileType = fileTypeManager.findFileTypeByName("Python")
+        if (pyFileType == null || !fileTypeManager.isFileOfType(data, pyFileType)) {
+            return
+        }
+
+        val docManager = FileDocumentManager.getInstance()
+        docManager.getDocument(data)?.also { docManager.saveDocument(it) }
+
+        MayaCommandInterface(port).sendFileToMaya(data.path)
+    }
+
+    private fun getTargetFile(e: AnActionEvent): VirtualFile? {
+        return e.getData(LangDataKeys.VIRTUAL_FILE)
+            ?: e.project?.let { FileEditorManager.getInstance(it) }?.selectedFiles?.firstOrNull()
+    }
+}
+
 
 class LogConsole(
     project: Project,
@@ -381,14 +415,18 @@ class LogConsole(
     }
 
     override fun getOrCreateActions(): ActionGroup {
-        val group: DefaultActionGroup = super.getOrCreateActions() as DefaultActionGroup
+        val group = DefaultActionGroup()
+
+        group.addAction(SendBufferLogAction(port), Constraints.FIRST)
+        group.addAction(ConnectToMayaLogAction(this, port))
+        group.addSeparator()
+
+        val superGroup = super.getOrCreateActions() as DefaultActionGroup
+        group.addAll(superGroup.childActionsOrStubs.toList())
 
         val clearAllAction = ClearConsoleAndLogFileAction(this)
         val originalClearAllAction: AnAction = group.childActionsOrStubs.last { it is ClearConsoleAction }
-
         group.replaceAction(originalClearAllAction, clearAllAction)
-
-        group.addAction(ConnectToMayaLogAction(this, port), Constraints.FIRST)
 
         return group as ActionGroup
     }
