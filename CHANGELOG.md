@@ -1,5 +1,17 @@
 # MayaReCharm
 
+## [5.2.0] - 2026-07-08
+### Added
+- Execute Document in Maya directly from each Maya log tab toolbar
+- Automatic Maya log tab closing when an SDK port is edited successfully
+
+### Changed
+- Maya log tab workflow now restores user-opened tabs, keeps the selected-tab state, and improves tab reopening UX
+- SDK port editing now validates duplicate ports across registered Maya SDKs
+
+### Removed
+- MayaReCharm run configuration type and related run/debug runners
+
 ## [5.1.1] - 2026-07-06
 ### Fixed
 - Update Python dependency to PythonCore for intellijPlatform 262 compatibility
@@ -24,7 +36,6 @@
 ### Added
 - Reconnect action and multi-SDK tab support in the Maya log tool window
 
-### Changed
 - Refactored attach/debug plumbing and modernized `attach_pydevd.py` argument parsing
 - Refined Maya SDK naming/detection helpers and execute-action SDK resolution
 - Improved Maya log wiring and `open_log.py` startup behavior with cleaner initialization output
@@ -136,9 +147,9 @@
 - Better support for multiple Maya installs
 - Removed dependencies on PyCharm Professional's remote debugger as well as PyCharm Professional
 
+[5.2.0]: https://github.com/mathbou/MayaReCharm/releases/tag/v5.2.0
 [5.1.1]: https://github.com/mathbou/MayaReCharm/releases/tag/v5.1.1
 [5.1.0]: https://github.com/mathbou/MayaReCharm/releases/tag/v5.1.0
-[5.0.1]: https://github.com/mathbou/MayaReCharm/releases/tag/v5.0.1
 [5.0.0]: https://github.com/mathbou/MayaReCharm/releases/tag/v5.0.0
 [4.0.0]: https://github.com/mathbou/MayaReCharm/releases/tag/v4.0.0
 [3.4.0]: https://github.com/mathbou/MayaReCharm/releases/tag/v3.4.0
