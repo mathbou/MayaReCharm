@@ -5,8 +5,9 @@ Maya integration for PyCharm. MayaReCharm lets you execute the current document 
 allows attaching the PyDev debugger to a running Maya instance.
 <!-- Plugin description end -->
 
-For those looking for the compiled version, you can find it in the JetBrains Marketplace:
-[https://plugins.jetbrains.com/plugin/31239-mayarecharm/](https://plugins.jetbrains.com/plugin/31239-mayarecharm/)
+For those looking for the compiled version, you can find it in the **[JetBrains Marketplace](https://plugins.jetbrains.com/plugin/31239-mayarecharm/)** or install it directly from your IDE's plugin manager.
+
+If you need older versions, you can find them in the original [MayaCharm repository](https://github.com/cmcpasserby/MayaCharm) by Chris Cunningham.
 
 ## 🥰 Support My Work
 
