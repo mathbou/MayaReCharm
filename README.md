@@ -8,6 +8,15 @@ allows attaching the PyDev debugger to a running Maya instance.
 For those looking for the compiled version, you can find it in the JetBrains Marketplace:
 [https://plugins.jetbrains.com/plugin/31239-mayarecharm/](https://plugins.jetbrains.com/plugin/31239-mayarecharm/)
 
+## 🥰 Support My Work
+
+If you appreciate my work, consider ⭐ starring this repository or 💰 making a donation to support
+future updates and maintenance.
+
+[![](https://img.shields.io/badge/GITHUB%20SPONSOR-30363d?style=for-the-badge&logo=GitHub-Sponsors&logoColor=EA4AAA)](https://github.com/sponsors/mathbou)
+[![Static Badge](https://img.shields.io/badge/STRIPE-f6f9fc?style=for-the-badge&logo=stripe)
+](https://donate.stripe.com/5kQ3cn9vd0PB5EB75583C00)
+
 ## Installation
 
 MayaReCharm requires some minimal setup. The settings panel is located at `Settings | Other Settings | MayaReCharm`.
