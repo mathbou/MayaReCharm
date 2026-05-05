@@ -23,7 +23,6 @@ future updates and maintenance.
 MayaReCharm requires some minimal setup. The settings panel is located at `Settings | Other Settings | MayaReCharm`.
 
 - **Port Numbers:** Define the port numbers MayaReCharm will use to communicate with your Maya installations.
-- **Active Maya SDK:** Set the Maya installation used for the `Execute Document` and `Execute Selection` actions.
 - **Maya Interpreters:** Add `mayapy` interpreters to make them available for code execution. Note that adding `mayapy`
   via the standard `Settings | Python Interpreter` is not supported.
 
@@ -36,10 +35,11 @@ code in Maya or add it to your `userSetup.py` file.
 
 ## Usage
 
-Once configured, mayapy interpreters are available as Python Interpreter. You can select them through the bottom-right
-interpreter selector in the IDE.
+Once configured, mayapy interpreters are available as Python Interpreter. Select one of them through the bottom-right
+interpreter selector in the IDE so you can enjoy proper syntax highlighting and code completion for Maya's Python API,
+this will also determine to which Maya `Execute Actions` will send the code.
 
-![MayaReCharm_select_interpreter.jpg](docs/MayaReCharm_select_interpreter.jpg)
+![MayaReCharm_select_interpreter.jpg](docs/MayaReCharm_select_interpreter.png)
 
 MayaReCharm also adds a new type of Run Configuration. Select the Maya instance to connect to and provide a Python file
 or specific code to execute.
@@ -61,3 +61,18 @@ process list, allowing you to attach the local PyDev debugger.
 
 ![MayaReCharm Attach Dialog](docs/mc_attach_to_proc.png)
 
+### Logging
+
+MayaReCharm provides a logging console that captures output from Maya. You can access it via
+`View | Tool Windows | MayaLog` or by the Maya icon in the left tool window bar.
+
+![MayaReCharm_logging.png](docs/MayaReCharm_logging.png)
+
+The console supports one tab for each configured Maya interpreter, allowing you to view logs from multiple versions of
+Maya simultaneously. It also supports search and log level filtering.
+
+The Maya icon button in the console toolbar is the new location of the "Connect to Maya's log" action. It will try to
+connect to your Maya instance that matches the current tab. If the connection is successful, you'll see the message
+`PyCharm logger initialized and callback registered.` both in the console (`INFO` level) and in the Maya script editor.
+If nothing happens, try closing the tab and reopening it, or check the log level filter to ensure `INFO` level messages
+are visible.
