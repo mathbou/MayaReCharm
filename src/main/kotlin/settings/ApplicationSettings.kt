@@ -1,11 +1,11 @@
 package settings
 
+import flavors.MayaSdkFlavor
 import mayacomms.mayaFromMayaPy
-import mayacomms.mayaPyExecutableName
 
 import com.intellij.openapi.components.*
+import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.Sdk
-import com.jetbrains.python.sdk.PythonSdkUtil
 import java.util.*
 
 typealias SdkPortMap = MutableMap<String, ApplicationSettings.SdkInfo>
@@ -35,23 +35,11 @@ class ApplicationSettings : PersistentStateComponent<ApplicationSettings.State> 
     }
 
     init {
-        val mayaSdk =
-            PythonSdkUtil.getAllLocalCPythons().filter { it.homePath?.endsWith(mayaPyExecutableName) ?: false }
-
-        for (sdk in mayaSdk) {
-            val path = sdk.homePath!!
-            mayaSdkMapping[path] = SdkInfo(path, -1)
-        }
-        assignEmptyPorts()
+        reloadMayaSdkMapping()
     }
 
     fun findByPath(path: String): Sdk? {
-        for (sdk in PythonSdkUtil.getAllSdks()) {
-            if (sdk.homePath.equals(path)) {
-                return sdk
-            }
-        }
-        return null
+        return ProjectJdkTable.getInstance().allJdks.firstOrNull { sdk -> sdk.homePath == path }
     }
 
     var mayaSdkMapping: SdkPortMap
@@ -65,43 +53,30 @@ class ApplicationSettings : PersistentStateComponent<ApplicationSettings.State> 
     }
 
     override fun loadState(state: State) {
-        val mayaPySdks =
-            PythonSdkUtil.getAllLocalCPythons().filter { x -> x.homePath?.endsWith(mayaPyExecutableName) ?: false }
-
-        mayaSdkMapping.clear()
-
-        for (sdk in mayaPySdks) {
-            val path = sdk.homePath!!
-            if (state.mayaSdkMapping.containsKey(path)) {
-                mayaSdkMapping[path] = state.mayaSdkMapping[path]!!
-                continue
-            }
-            mayaSdkMapping[path] = SdkInfo(path, -1)
-        }
-        assignEmptyPorts()
+        reloadMayaSdkMapping(state.mayaSdkMapping)
     }
 
     fun refreshPythonSdks() {
-        val mayaSdk =
-            PythonSdkUtil.getAllLocalCPythons().filter { it.homePath?.endsWith(mayaPyExecutableName) ?: false }
+        reloadMayaSdkMapping(mayaSdkMapping)
+    }
 
-        val homePathsSet = mayaSdk.map { it.homePath!! }.toSet()
-        val sdkMappingKeySet = mayaSdkMapping.keys.toSet()
+    private fun reloadMayaSdkMapping(savedMapping: Map<String, SdkInfo> = emptyMap()) {
+        val reloadedMapping = mutableMapOf<String, SdkInfo>()
 
-        val toAdd = homePathsSet - sdkMappingKeySet
-        val toRemove = sdkMappingKeySet - homePathsSet
-
-        for (path in toRemove) {
-            mayaSdkMapping.remove(path)
+        for (path in getRegisteredMayaSdkPaths()) {
+            reloadedMapping[path] = savedMapping[path]?.copy(mayaPyPath = path) ?: SdkInfo(path, -1)
         }
 
-        for (sdk in mayaSdk) {
-            val path = sdk.homePath!!
-            if (path in toAdd) {
-                mayaSdkMapping[path] = SdkInfo(path, -1)
-            }
-        }
+        mayaSdkMapping.clear()
+        mayaSdkMapping.putAll(reloadedMapping)
         assignEmptyPorts()
+    }
+
+    private fun getRegisteredMayaSdkPaths(): List<String> {
+        return ProjectJdkTable.getInstance().allJdks
+            .mapNotNull { sdk -> sdk.homePath }
+            .filter(MayaSdkFlavor::isValidMayaSdkPath)
+            .distinct()
     }
 
     private fun assignEmptyPorts() {
