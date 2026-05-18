@@ -9,7 +9,7 @@ def getPyCharmLogger():
 
     app_logger_name = os.environ.get("MAYA_DEFAULT_LOGGER_NAME", "")
     log = logging.getLogger(app_logger_name + ".PyCharm")
-    log.setLevel(logging.DEBUG)
+    log.setLevel(5)
     log.propagate = False
 
     for h in log.handlers:
@@ -42,6 +42,8 @@ def writeToTerminal(msg, msg_type, log):
         log.exception(line)
     elif msg_type == om.MCommandMessage.kDisplay:
         log.debug(line)
+    elif msg_type == om.MCommandMessage.kHistory:
+        log.log(5, line.strip())
 
 _pycharm_logger = getPyCharmLogger()
 
