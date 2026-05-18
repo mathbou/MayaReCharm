@@ -1,5 +1,9 @@
 # MayaReCharm
 
+## [5.0.1] - 2026-05-18
+### Fixed
+- Fix Maya SDK mapping incompatibility with intellijPlatform 262
+
 ## [5.0.0] - 2026-05-06
 ### Added
 - Reconnect action and multi-SDK tab support in the Maya log tool window
