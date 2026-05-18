@@ -13,11 +13,20 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.Constraints
 import com.intellij.openapi.actionSystem.DefaultActionGroup
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.IconLoader
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.psi.search.GlobalSearchScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import mayacomms.MayaCommandInterface
 import java.io.BufferedReader
 import java.io.File
@@ -28,6 +37,7 @@ import java.nio.charset.Charset
 import java.nio.file.Files
 import java.util.Arrays
 import java.util.LinkedHashSet
+import kotlin.time.Duration.Companion.milliseconds
 import MayaBundle as Loc
 
 enum class MayaLogSeverity {
@@ -262,6 +272,14 @@ class LogConsole(
 
     private val path = file.absolutePath
     private var oldSnapshot = FileSnapshot()
+    private val refilterScrollScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+    private var refilterScrollJob: Job? = null
+
+    init {
+        Disposer.register(this) {
+            refilterScrollScope.cancel()
+        }
+    }
 
     override fun getTooltip(): String {
         return path
@@ -328,6 +346,26 @@ class LogConsole(
 
         val msg = normalizeLineForDisplay(rawMessage, effectiveSeverity)
         super.addMessage(msg)
+    }
+
+    override fun onFilterStateChange(filter: LogFilter) {
+        super.onFilterStateChange(filter)
+        keepScrollAtBottomAfterRefilter()
+    }
+
+    override fun onTextFilterChange() {
+        super.onTextFilterChange()
+        keepScrollAtBottomAfterRefilter()
+    }
+
+    private fun keepScrollAtBottomAfterRefilter() {
+        refilterScrollJob?.cancel()
+        refilterScrollJob = refilterScrollScope.launch {
+            delay(30.milliseconds)
+            ApplicationManager.getApplication().invokeLater {
+                consoleNotNull.requestScrollingToEnd()
+            }
+        }
     }
 
     override fun isActive(): Boolean {
