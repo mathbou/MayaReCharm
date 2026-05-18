@@ -32,7 +32,7 @@ def writeToTerminal(msg, msg_type, log):
     if not line.strip():
         return
 
-    if msg_type in [om.MCommandMessage.kInfo, om.MCommandMessage.kResult]:
+    if msg_type in [om.MCommandMessage.kInfo]:
         log.info(line)
     elif msg_type == om.MCommandMessage.kWarning:
         log.warning(line)
@@ -40,7 +40,7 @@ def writeToTerminal(msg, msg_type, log):
         log.error(line)
     elif msg_type == om.MCommandMessage.kStackTrace:
         log.exception(line)
-    elif msg_type == om.MCommandMessage.kDisplay:
+    elif msg_type in [om.MCommandMessage.kDisplay, om.MCommandMessage.kResult]:
         log.debug(line)
     elif msg_type == om.MCommandMessage.kHistory:
         log.log(5, line.strip())
