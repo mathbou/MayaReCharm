@@ -27,15 +27,8 @@ import java.io.Reader
 import java.nio.charset.Charset
 import java.nio.file.Files
 import java.util.Arrays
+import java.util.LinkedHashSet
 import MayaBundle as Loc
-
-private enum class MayaLogLevelFilter {
-    ALL,
-    DEBUG,
-    INFO,
-    WARN,
-    ERROR
-}
 
 enum class MayaLogSeverity {
     HISTORY,
@@ -45,10 +38,13 @@ enum class MayaLogSeverity {
     ERROR
 }
 
+private val LEVEL_5_REGEX = Regex("(?<=- )\\b(level\\s*5|history)\\b(?= -)", RegexOption.IGNORE_CASE)
+
+
 class MayaLogFilterModel(project: Project, tabId: String) : DefaultLogFilterModel(project) {
     private var previousSeverity: MayaLogSeverity? = null
     private val selectedFilterKey = "$SELECTED_FILTER_KEY_PREFIX.$tabId"
-    private var selectedFilter: MayaLogLevelFilter = loadPersistedFilter(selectedFilterKey)
+    private val selectedSeverities: MutableSet<MayaLogSeverity> = loadPersistedSeverities(selectedFilterKey)
 
     init {
         isCheckStandartFilters = false
@@ -56,11 +52,12 @@ class MayaLogFilterModel(project: Project, tabId: String) : DefaultLogFilterMode
 
     override fun getLogFilters(): List<LogFilter> {
         val filters = mutableListOf<LogFilter>()
-        filters.add(SeverityFilter("All", MayaLogLevelFilter.ALL))
-        filters.add(SeverityFilter("Debug", MayaLogLevelFilter.DEBUG))
-        filters.add(SeverityFilter("Infos", MayaLogLevelFilter.INFO))
-        filters.add(SeverityFilter("Warnings", MayaLogLevelFilter.WARN))
-        filters.add(SeverityFilter("Errors", MayaLogLevelFilter.ERROR))
+        filters.add(ToggleAllFilter("All"))
+        filters.add(SeverityFilter("History", MayaLogSeverity.HISTORY))
+        filters.add(SeverityFilter("Debug", MayaLogSeverity.DEBUG))
+        filters.add(SeverityFilter("Infos", MayaLogSeverity.INFO))
+        filters.add(SeverityFilter("Warnings", MayaLogSeverity.WARNING))
+        filters.add(SeverityFilter("Errors", MayaLogSeverity.ERROR))
         filters.addAll(getPreferences().registeredLogFilters)
         return filters
     }
@@ -84,16 +81,15 @@ class MayaLogFilterModel(project: Project, tabId: String) : DefaultLogFilterMode
         return MyProcessingResult(contentType, isVisible, null)
     }
 
+    override fun isFilterSelected(filter: LogFilter): Boolean {
+        // LogConsoleBase.resetLogFilter() programmatically selects the first "selected" filter,
+        // which would call selectFilter() and toggle it off. We rely on in-item checkmarks instead.
+        return false
+    }
+
     private fun isVisibleForSelectedFilter(severity: MayaLogSeverity?): Boolean {
         severity ?: return true
-
-        return when (selectedFilter) {
-            MayaLogLevelFilter.ALL -> true
-            MayaLogLevelFilter.DEBUG -> severity != MayaLogSeverity.HISTORY
-            MayaLogLevelFilter.INFO -> severity != MayaLogSeverity.HISTORY && severity != MayaLogSeverity.DEBUG
-            MayaLogLevelFilter.WARN -> severity == MayaLogSeverity.WARNING || severity == MayaLogSeverity.ERROR
-            MayaLogLevelFilter.ERROR -> severity == MayaLogSeverity.ERROR
-        }
+        return severity in selectedSeverities
     }
 
     fun detectSeverity(line: String): MayaLogSeverity? {
@@ -110,14 +106,27 @@ class MayaLogFilterModel(project: Project, tabId: String) : DefaultLogFilterMode
         }
     }
 
-    private inner class SeverityFilter(name: String, private val filter: MayaLogLevelFilter) : IndependentLogFilter(name) {
+    private inner class SeverityFilter(
+        private val label: String,
+        private val severity: MayaLogSeverity
+    ) : IndependentLogFilter(label) {
+        override fun getName(): String {
+            return displayName(label, selectedSeverities.contains(severity))
+        }
+
+        override fun toString(): String {
+            return getName()
+        }
+
         override fun selectFilter() {
-            selectedFilter = filter
-            persistFilter(selectedFilterKey, filter)
+            if (!selectedSeverities.add(severity)) {
+                selectedSeverities.remove(severity)
+            }
+            persistFilters(selectedFilterKey, selectedSeverities)
         }
 
         override fun isSelected(): Boolean {
-            return selectedFilter == filter
+            return selectedSeverities.contains(severity)
         }
 
         override fun isAcceptable(line: String): Boolean {
@@ -125,21 +134,86 @@ class MayaLogFilterModel(project: Project, tabId: String) : DefaultLogFilterMode
         }
     }
 
-    private companion object {
-        private const val SELECTED_FILTER_KEY_PREFIX = "mayarecharm.logconsole.selectedFilter"
-        val LEVEL_5_REGEX = Regex("\\blevel\\s*5\\b", RegexOption.IGNORE_CASE)
-
-        private fun loadPersistedFilter(selectedFilterKey: String): MayaLogLevelFilter {
-            val properties = PropertiesComponent.getInstance()
-            val persistedFilter = properties.getValue(selectedFilterKey)
-
-            return persistedFilter
-                ?.let { value -> MayaLogLevelFilter.entries.firstOrNull { it.name == value } }
-                ?: MayaLogLevelFilter.INFO
+    private inner class ToggleAllFilter(private val label: String) : IndependentLogFilter(label) {
+        override fun getName(): String {
+            return displayName(label, allSeveritiesSelected())
         }
 
-        private fun persistFilter(selectedFilterKey: String, filter: MayaLogLevelFilter) {
-            PropertiesComponent.getInstance().setValue(selectedFilterKey, filter.name)
+        override fun toString(): String {
+            return getName()
+        }
+
+        override fun selectFilter() {
+            if (allSeveritiesSelected()) {
+                selectedSeverities.clear()
+            }
+            else {
+                selectedSeverities.clear()
+                selectedSeverities.addAll(ALL_SEVERITIES)
+            }
+            persistFilters(selectedFilterKey, selectedSeverities)
+        }
+
+        override fun isSelected(): Boolean {
+            return allSeveritiesSelected()
+        }
+
+        override fun isAcceptable(line: String): Boolean {
+            return true
+        }
+    }
+
+    private fun allSeveritiesSelected(): Boolean {
+        return selectedSeverities.containsAll(ALL_SEVERITIES)
+    }
+
+    private companion object {
+        private const val SELECTED_FILTER_KEY_PREFIX = "mayarecharm.logconsole.selectedFilter"
+
+        private val DEFAULT_SELECTED_SEVERITIES = linkedSetOf(
+            MayaLogSeverity.INFO,
+            MayaLogSeverity.WARNING,
+            MayaLogSeverity.ERROR
+        )
+        private val ALL_SEVERITIES = linkedSetOf(
+            MayaLogSeverity.HISTORY,
+            MayaLogSeverity.DEBUG,
+            MayaLogSeverity.INFO,
+            MayaLogSeverity.WARNING,
+            MayaLogSeverity.ERROR
+        )
+
+        private fun loadPersistedSeverities(selectedFilterKey: String): MutableSet<MayaLogSeverity> {
+            val properties = PropertiesComponent.getInstance()
+            val persistedValue = properties.getValue(selectedFilterKey)
+
+            if (persistedValue.isNullOrBlank()) {
+                return LinkedHashSet(DEFAULT_SELECTED_SEVERITIES)
+            }
+
+            val severities = persistedValue
+                .split(',')
+                .map { entry -> entry.trim() }
+                .mapNotNull { entry -> MayaLogSeverity.entries.firstOrNull { it.name == entry } }
+                .toCollection(LinkedHashSet())
+
+            return if (severities.isEmpty()) {
+                LinkedHashSet(DEFAULT_SELECTED_SEVERITIES)
+            }
+            else {
+                severities
+            }
+        }
+
+        private fun persistFilters(selectedFilterKey: String, selectedSeverities: Set<MayaLogSeverity>) {
+            val persistedValue = MayaLogSeverity.entries
+                .filter { severity -> selectedSeverities.contains(severity) }
+                .joinToString(",") { severity -> severity.name }
+            PropertiesComponent.getInstance().setValue(selectedFilterKey, persistedValue)
+        }
+
+        private fun displayName(label: String, selected: Boolean): String {
+            return if (selected) "✔ $label" else "    $label"
         }
     }
 }
@@ -211,19 +285,48 @@ class LogConsole(
         return super.getFilterModel() as MayaLogFilterModel?
     }
 
+    private val DARK_WARNING_COLOR_CODE = 93
+    private val DARK_HISTORY_COLOR_CODE = 95
+    private val DARK_DEBUG_COLOR_CODE = 96
+    private val LIGHT_WARNING_COLOR_CODE = 33
+    private val LIGHT_HISTORY_COLOR_CODE = 35
+    private val LIGHT_DEBUG_COLOR_CODE = 36
+
+    private fun ansiColorCodeFor(severity: MayaLogSeverity?): Int? {
+        val isDarkTheme = EditorColorsManager.getInstance().isDarkEditor
+
+        return when (severity) {
+            MayaLogSeverity.WARNING -> if (isDarkTheme) DARK_WARNING_COLOR_CODE else LIGHT_WARNING_COLOR_CODE
+            MayaLogSeverity.HISTORY -> if (isDarkTheme) DARK_HISTORY_COLOR_CODE else LIGHT_HISTORY_COLOR_CODE
+            MayaLogSeverity.DEBUG -> if (isDarkTheme) DARK_DEBUG_COLOR_CODE else LIGHT_DEBUG_COLOR_CODE
+            else -> null
+        }
+    }
+
+    fun normalizeLineForDisplay(line: String, severity: MayaLogSeverity?): String {
+        val normalizedLine = LEVEL_5_REGEX.replaceFirst(line, MayaLogSeverity.HISTORY.toString())
+        val colorCode = ansiColorCodeFor(severity)
+
+        return if (colorCode != null) {
+            "\u001B[${colorCode}m$normalizedLine\u001B[0m"
+        }
+        else {
+            normalizedLine
+        }
+    }
+
+    private var previousSeverity: MayaLogSeverity? = null
+
     override fun addMessage(text: String?) {
-        var msg: String = text ?: ""
+        val rawMessage = text ?: ""
 
-        val logType = filterModel?.detectSeverity(msg)
-        if (logType == MayaLogSeverity.HISTORY) {
-            msg = msg.replaceFirst("Level 5", "HISTORY")
+        val detectedSeverity = filterModel?.detectSeverity(rawMessage)
+        val effectiveSeverity = detectedSeverity ?: previousSeverity
+        if (detectedSeverity != null) {
+            previousSeverity = detectedSeverity
         }
 
-        val colorCode = ansiColorCodeFor(logType)
-        if (colorCode != null) {
-            msg = "\u001B[${colorCode}m$msg\u001B[0m"
-        }
-
+        val msg = normalizeLineForDisplay(rawMessage, effectiveSeverity)
         super.addMessage(msg)
     }
 
@@ -272,24 +375,6 @@ class LogConsole(
     }
 
     companion object {
-        private const val DARK_WARNING_COLOR_CODE = 93
-        private const val DARK_HISTORY_COLOR_CODE = 95
-        private const val DARK_DEBUG_COLOR_CODE = 96
-        private const val LIGHT_WARNING_COLOR_CODE = 33
-        private const val LIGHT_HISTORY_COLOR_CODE = 35
-        private const val LIGHT_DEBUG_COLOR_CODE = 36
-
-        private fun ansiColorCodeFor(severity: MayaLogSeverity?): Int? {
-            val isDarkTheme = EditorColorsManager.getInstance().isDarkEditor
-
-            return when (severity) {
-                MayaLogSeverity.WARNING -> if (isDarkTheme) DARK_WARNING_COLOR_CODE else LIGHT_WARNING_COLOR_CODE
-                MayaLogSeverity.HISTORY -> if (isDarkTheme) DARK_HISTORY_COLOR_CODE else LIGHT_HISTORY_COLOR_CODE
-                MayaLogSeverity.DEBUG -> if (isDarkTheme) DARK_DEBUG_COLOR_CODE else LIGHT_DEBUG_COLOR_CODE
-                else -> null
-            }
-        }
-
         private fun getReader(file: File, charset: Charset, skippedContents: Long): Reader? {
             return try {
                 try {
@@ -301,17 +386,14 @@ class LogConsole(
                         }
                     }
                     BufferedReader(InputStreamReader(inputStream, charset))
-                }
-                catch (_: FileNotFoundException) {
+                } catch (_: FileNotFoundException) {
                     if (FileUtilRt.createIfNotExists(file)) {
                         BufferedReader(InputStreamReader(Files.newInputStream(file.toPath()), charset))
-                    }
-                    else {
+                    } else {
                         null
                     }
                 }
-            }
-            catch (_: Throwable) {
+            } catch (_: Throwable) {
                 null
             }
         }
