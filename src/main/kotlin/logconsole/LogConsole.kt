@@ -13,6 +13,7 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.Constraints
 import com.intellij.openapi.actionSystem.DefaultActionGroup
+import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.IconLoader
 import com.intellij.openapi.util.io.FileUtilRt
@@ -214,17 +215,13 @@ class LogConsole(
         var msg: String = text ?: ""
 
         val logType = filterModel?.detectSeverity(msg)
-
-        if (logType == MayaLogSeverity.WARNING) {
-            msg = "\u001B[93m$msg\u001B[0m"
-        }
-        else if (logType == MayaLogSeverity.DEBUG) {
-            msg = "\u001B[96m$msg\u001B[0m"
-        }
-        else if (logType == MayaLogSeverity.HISTORY) {
+        if (logType == MayaLogSeverity.HISTORY) {
             msg = msg.replaceFirst("Level 5", "HISTORY")
-            msg = "\u001B[95m$msg\u001B[0m"
+        }
 
+        val colorCode = ansiColorCodeFor(logType)
+        if (colorCode != null) {
+            msg = "\u001B[${colorCode}m$msg\u001B[0m"
         }
 
         super.addMessage(msg)
@@ -275,6 +272,24 @@ class LogConsole(
     }
 
     companion object {
+        private const val DARK_WARNING_COLOR_CODE = 93
+        private const val DARK_HISTORY_COLOR_CODE = 95
+        private const val DARK_DEBUG_COLOR_CODE = 96
+        private const val LIGHT_WARNING_COLOR_CODE = 33
+        private const val LIGHT_HISTORY_COLOR_CODE = 35
+        private const val LIGHT_DEBUG_COLOR_CODE = 36
+
+        private fun ansiColorCodeFor(severity: MayaLogSeverity?): Int? {
+            val isDarkTheme = EditorColorsManager.getInstance().isDarkEditor
+
+            return when (severity) {
+                MayaLogSeverity.WARNING -> if (isDarkTheme) DARK_WARNING_COLOR_CODE else LIGHT_WARNING_COLOR_CODE
+                MayaLogSeverity.HISTORY -> if (isDarkTheme) DARK_HISTORY_COLOR_CODE else LIGHT_HISTORY_COLOR_CODE
+                MayaLogSeverity.DEBUG -> if (isDarkTheme) DARK_DEBUG_COLOR_CODE else LIGHT_DEBUG_COLOR_CODE
+                else -> null
+            }
+        }
+
         private fun getReader(file: File, charset: Charset, skippedContents: Long): Reader? {
             return try {
                 try {
