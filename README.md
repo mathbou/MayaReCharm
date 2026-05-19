@@ -71,8 +71,9 @@ MayaReCharm provides a logging console that captures output from Maya. You can a
 The console supports one tab for each configured Maya interpreter, allowing you to view logs from multiple versions of
 Maya simultaneously. It also supports search and log level filtering.
 
-The Maya icon button in the console toolbar is the new location of the "Connect to Maya's log" action. It will try to
-connect to your Maya instance that matches the current tab. If the connection is successful, you'll see the message
-`PyCharm logger initialized and callback registered.` both in the console (`INFO` level) and in the Maya script editor.
+The ![MayaReCharm_Action.png](src/main/resources/icons/MayaReCharm_Action.png)  button in the console toolbar is the new
+location of the `Connect to Maya's log` action. It will try to connect to your Maya instance that matches the current tab.
+If the connection is successful, you'll see the message `PyCharm logger initialized and callback registered.` both in
+the console (`INFO` level) and in the Maya script editor.
 If nothing happens, try closing the tab and reopening it, or check the log level filter to ensure `INFO` level messages
 are visible.
