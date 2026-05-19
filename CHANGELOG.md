@@ -1,5 +1,17 @@
 # MayaReCharm
 
+## [5.1.0] - 2026-05-20
+### Added
+- Log console shows Maya Script Editor commands history in a custom level, lower than debug.
+- Log message coloring adapts to theme feel (light/dark).
+- Log filter levels can be toggled independently.
+
+### Fixed
+- Maintain scroll position after applying log level filter.
+
+### Changed
+- kResult message now shown as debug log instead of info.
+
 ## [5.0.1] - 2026-05-18
 ### Fixed
 - Fix Maya SDK mapping incompatibility with intellijPlatform 262
@@ -120,6 +132,8 @@
 - Better support for multiple Maya installs
 - Removed dependencies on PyCharm Professional's remote debugger as well as PyCharm Professional
 
+[5.1.0]: https://github.com/mathbou/MayaReCharm/releases/tag/v5.1.0
+[5.0.1]: https://github.com/mathbou/MayaReCharm/releases/tag/v5.0.1
 [5.0.0]: https://github.com/mathbou/MayaReCharm/releases/tag/v5.0.0
 [4.0.0]: https://github.com/mathbou/MayaReCharm/releases/tag/v4.0.0
 [3.4.0]: https://github.com/mathbou/MayaReCharm/releases/tag/v3.4.0
