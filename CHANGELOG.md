@@ -1,5 +1,9 @@
 # MayaReCharm
 
+## [5.1.1] - 2026-07-06
+### Fixed
+- Update Python dependency to PythonCore for intellijPlatform 262 compatibility
+
 ## [5.1.0] - 2026-05-20
 ### Added
 - Log console shows Maya Script Editor commands history in a custom level, lower than debug.
@@ -132,6 +136,7 @@
 - Better support for multiple Maya installs
 - Removed dependencies on PyCharm Professional's remote debugger as well as PyCharm Professional
 
+[5.1.1]: https://github.com/mathbou/MayaReCharm/releases/tag/v5.1.1
 [5.1.0]: https://github.com/mathbou/MayaReCharm/releases/tag/v5.1.0
 [5.0.1]: https://github.com/mathbou/MayaReCharm/releases/tag/v5.0.1
 [5.0.0]: https://github.com/mathbou/MayaReCharm/releases/tag/v5.0.0
