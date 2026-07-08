@@ -5,9 +5,11 @@ Maya integration for PyCharm. MayaReCharm lets you execute the current document 
 allows attaching the PyDev debugger to a running Maya instance.
 <!-- Plugin description end -->
 
-For those looking for the compiled version, you can find it in the **[JetBrains Marketplace](https://plugins.jetbrains.com/plugin/31239-mayarecharm/)** or install it directly from your IDE's plugin manager.
+> [!NOTE]
+> For those looking for the compiled version, you can find it in the **[JetBrains Marketplace](https://plugins.jetbrains.com/plugin/31239-mayarecharm/)** or install it directly from your IDE's plugin manager.
 
-If you need older versions, you can find them in the original [MayaCharm repository](https://github.com/cmcpasserby/MayaCharm) by Chris Cunningham.
+> [!TIP]
+> If you need older versions, you can find them in the original [MayaCharm repository](https://github.com/cmcpasserby/MayaCharm) by Chris Cunningham.
 
 ## 🥰 Support My Work
 
@@ -23,10 +25,12 @@ future updates and maintenance.
 MayaReCharm requires some minimal setup. The settings panel is located at `Settings | Other Settings | MayaReCharm`.
 
 - **Port Numbers:** Define the port numbers MayaReCharm will use to communicate with your Maya installations.
-- **Maya Interpreters:** Add `mayapy` interpreters to make them available for code execution. Note that adding `mayapy`
-  via the standard `Settings | Python Interpreter` is not supported.
+- **Maya Interpreters:** Add `mayapy` interpreters to make them available for code execution. 
 
 ![MayaReCharm Settings Panel](docs/MayaReCharm3_Settings.png)
+
+> [!WARNING]
+> Adding `mayapy` via the standard `Settings | Python Interpreter` is not supported.
 
 When editing a port number, MayaReCharm displays the code required to open Maya for connections. You can execute this
 code in Maya or add it to your `userSetup.py` file.
@@ -35,16 +39,18 @@ code in Maya or add it to your `userSetup.py` file.
 
 ## Usage
 
-Once configured, mayapy interpreters are available as Python Interpreter. Select one of them through the bottom-right
+Once configured, `mayapy` interpreters are available as Python Interpreter. Select one of them through the bottom-right
 interpreter selector in the IDE so you can enjoy proper syntax highlighting and code completion for Maya's Python API,
 this will also determine to which Maya `Execute Actions` will send the code.
 
 ![MayaReCharm_select_interpreter.jpg](docs/MayaReCharm_select_interpreter.png)
 
-MayaReCharm also adds a new type of Run Configuration. Select the Maya instance to connect to and provide a Python file
-or specific code to execute.
+Maya interpreters can also be used in `Run Configurations`. The script will be executed by a new standalone `mayapy`
+process.
+In this specific case, `maya.cmds` will require an initialization as
+explained [here](https://help.autodesk.com/view/MAYAUL/2027/ENU/?guid=GUID-D457D6A0-1E7F-4ED2-B0B4-8B57153B563B)
 
-![MayaReCharm Run Config](docs/MayaReCharm3_RunConfig.jpg)
+![MayaReCharm Run Config](docs/MayaReCharm3_RunConfig.png)
 
 ### Actions
 
@@ -71,8 +77,13 @@ MayaReCharm provides a logging console that captures output from Maya. You can a
 The console supports one tab for each configured Maya interpreter, allowing you to view logs from multiple versions of
 Maya simultaneously. It also supports search and log level filtering.
 
-The ![MayaReCharm_Action.png](src/main/resources/icons/MayaReCharm_Action.png)  button in the console toolbar is the new
-location of the `Connect to Maya's log` action. It will try to connect to your Maya instance that matches the current tab.
+The ![MayaReCharm_Action.png](src/main/resources/icons/MayaReCharm_Action.png) button in the console toolbar is a
+shortcut for the `Execute Document` action with a small twist. It will send the current file to the Maya
+instance associated with the focused tab, even if the current project interpreter does not match.
+
+The ![MayaReCharm_link16.png](src/main/resources/icons/MayaReCharm_link16.png)  button in the console toolbar is the new
+location of the `Connect to Maya's log` action. It will try to connect to your Maya instance that matches the current
+tab.
 If the connection is successful, you'll see the message `PyCharm logger initialized and callback registered.` both in
 the console (`INFO` level) and in the Maya script editor.
 If nothing happens, try closing the tab and reopening it, or check the log level filter to ensure `INFO` level messages
