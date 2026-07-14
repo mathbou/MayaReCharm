@@ -1,5 +1,9 @@
 # MayaReCharm
 
+## [5.2.1] - 2026-07-14
+### Revert
+- Update Python dependency to PythonCore for intellijPlatform 262 compatibility
+
 ## [5.2.0] - 2026-07-08
 ### Added
 - Execute Document in Maya directly from each Maya log tab toolbar
@@ -147,6 +151,7 @@
 - Better support for multiple Maya installs
 - Removed dependencies on PyCharm Professional's remote debugger as well as PyCharm Professional
 
+[5.2.1]: https://github.com/mathbou/MayaReCharm/releases/tag/v5.2.1
 [5.2.0]: https://github.com/mathbou/MayaReCharm/releases/tag/v5.2.0
 [5.1.1]: https://github.com/mathbou/MayaReCharm/releases/tag/v5.1.1
 [5.1.0]: https://github.com/mathbou/MayaReCharm/releases/tag/v5.1.0
