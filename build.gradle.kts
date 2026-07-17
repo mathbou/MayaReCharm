@@ -1,5 +1,6 @@
 import org.jetbrains.changelog.markdownToHTML
 import org.jetbrains.changelog.Changelog
+import org.jetbrains.intellij.platform.gradle.IntelliJPlatformType
 
 plugins {
     kotlin("jvm") version "2.3.20"
@@ -30,13 +31,11 @@ repositories {
 dependencies {
     intellijPlatform {
         val version = providers.gradleProperty("platformVersion")
-        pycharm(version) { useInstaller = false }
+        intellijIdea(version)
 
         pluginVerifier()
 
-        // Plugin Dependencies. Uses `platformBundledPlugins` property from the gradle.properties file for bundled IntelliJ Platform plugins.
-        bundledPlugins(providers.gradleProperty("platformBundledPlugins").map { it.split(',') })
-
+        compatiblePlugin(providers.gradleProperty("platformPlugins"))
     }
 }
 
@@ -84,8 +83,11 @@ intellijPlatform {
     }
 
     pluginVerification {
+        val platformVersion = providers.gradleProperty("platformVersion").get()
         ides {
             recommended()
+            create(IntelliJPlatformType.RustRover, platformVersion)
+            create(IntelliJPlatformType.PyCharm, platformVersion)
         }
     }
 }
