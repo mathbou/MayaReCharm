@@ -7,6 +7,8 @@ import com.intellij.util.io.createDirectories
 import kotlin.io.path.exists
 import java.io.*
 import java.net.Socket
+import java.nio.charset.StandardCharsets
+import java.nio.file.Files
 import java.nio.file.Paths
 
 const val LOG_FILENAME_STRING: String = "/mayalog%s.txt"
@@ -14,9 +16,8 @@ const val LOG_FILENAME_STRING: String = "/mayalog%s.txt"
 class MayaCommandInterface(private val port: Int) {
     private val logFileName: String = String.format(LOG_FILENAME_STRING, port)
 
-    private fun writeFile(text: String): File? {
+    private fun writeFile(text: String, includeEncodingDeclaration: Boolean = true): File? {
         var tempFile: File? = null
-        val bw: BufferedWriter
 
         try {
             tempFile = File.createTempFile("MayaReCharmTemp", ".py") ?: return null
@@ -24,11 +25,13 @@ class MayaCommandInterface(private val port: Int) {
                 tempFile.createNewFile()
             }
 
-            bw = BufferedWriter(FileWriter(tempFile))
-            bw.write(PythonStrings.UTF8_ENCODING_STR.message)
-            bw.newLine()
-            bw.write(text)
-            bw.close()
+            Files.newBufferedWriter(tempFile.toPath(), StandardCharsets.UTF_8).use { writer ->
+                if (includeEncodingDeclaration) {
+                    writer.write(PythonStrings.UTF8_ENCODING_STR.message)
+                    writer.newLine()
+                }
+                writer.write(text)
+            }
             tempFile.deleteOnExit()
         } catch (e: IOException) {
             Notifications.Bus.notify(MayaNotifications.FILE_FAIL)
@@ -37,12 +40,14 @@ class MayaCommandInterface(private val port: Int) {
         return tempFile
     }
 
-    private fun sendToPort(message: File) {
+    private fun sendToPort(message: File, sourcePath: String = message.path) {
         var client: Socket? = null
 
         try {
             client = Socket("localhost", port)
-            val outString = PythonStrings.EXECFILE.format(message.toString().replace("\\", "/"))
+            val messagePath = message.path.replace("\\", "/")
+            val compiledPath = sourcePath.replace("\\", "/")
+            val outString = PythonStrings.EXECFILE.format(messagePath, compiledPath)
             client.outputStream.write(outString.toByteArray())
         } catch (e: IOException) {
             Notifications.Bus.notify(MayaNotifications.CONNECTION_REFUSED)
@@ -55,6 +60,11 @@ class MayaCommandInterface(private val port: Int) {
     fun sendCodeToMaya(message: String) {
         val file = writeFile(message)
         sendToPort(file!!)
+    }
+
+    fun sendSelectionToMaya(code: String, sourcePath: String, startLine: Int) {
+        val file = writeFile("\n".repeat(startLine) + code, includeEncodingDeclaration = false)
+        sendToPort(file!!, sourcePath)
     }
 
     fun sendFileToMaya(path: String) {

@@ -5,6 +5,7 @@ import mayacomms.MayaCommandInterface
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.LangDataKeys
+import com.intellij.openapi.fileEditor.FileDocumentManager
 
 class SendSelectionAction : BaseSendAction(
     Loc.message("mayarecharm.action.SendSelectionText"),
@@ -13,7 +14,9 @@ class SendSelectionAction : BaseSendAction(
     override fun actionPerformed(e: AnActionEvent) {
         val sdk = getMayaSdk(e.getData(LangDataKeys.MODULE)) ?: return
 
-        val selectionModel = e.getData(LangDataKeys.EDITOR)?.selectionModel ?: return
+        val editor = e.getData(LangDataKeys.EDITOR) ?: return
+        val virtualFile = e.getData(LangDataKeys.VIRTUAL_FILE) ?: return
+        val selectionModel = editor.selectionModel
         val selectedText: String?
 
         if (selectionModel.hasSelection()) {
@@ -26,7 +29,10 @@ class SendSelectionAction : BaseSendAction(
             } else return
         }
 
-        MayaCommandInterface(sdk.port).sendCodeToMaya(selectedText!!)
+        val selectionStart = selectionModel.selectionStart
+        FileDocumentManager.getInstance().saveDocument(editor.document)
+        val startLine = editor.document.getLineNumber(selectionStart)
+        MayaCommandInterface(sdk.port).sendSelectionToMaya(selectedText!!, virtualFile.path, startLine)
     }
 
     override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT

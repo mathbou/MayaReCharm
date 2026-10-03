@@ -41,18 +41,17 @@ Otherwise, you can set a custom path in `Interpreter path`.
 
 ### Edit Maya Sdks
 
-You can edit Maya options using the ✏️ button. 
+You can edit Maya options using the ✏️ button.
 
 ![MayaReCharm Settings Panel](docs/MayaReCharm3_EditPort.png)
 
 - **Port Numbers:** Define the port numbers MayaReCharm will use to communicate with your Maya installations.<br>
-  - When editing a port number, MayaReCharm displays the code required to open Maya for connections. You can execute this
-  code in Maya or add it to your `userSetup.py` file.
+    - When editing a port number, MayaReCharm displays the code required to open Maya for connections. You can execute
+      this code in Maya or add it to your `userSetup.py` file.
 - **Maya Stubs:** Python stubs library used for autocompletion. You can choose between:
-  - `No stubs`: Infos fetched by the IDE from maya libs scan. Nearly no autocompletion.      
-  - [maya-stubs](https://github.com/Muream/maya-stubs) by Muream
-  - [types-maya-strict](https://github.com/LumaPictures/cg-stubs) by LumaPictures
-    ![MayaRecharm_StubDemo.gif](docs/MayaRecharm_StubDemo.gif)
+    - `No stubs`: Infos fetched by the IDE from maya libs scan. Nearly no autocompletion.
+    - [maya-stubs](https://github.com/Muream/maya-stubs) by Muream
+    - [types-maya-strict](https://github.com/LumaPictures/cg-stubs) by LumaPictures ![MayaRecharm_StubDemo.gif](docs/MayaRecharm_StubDemo.gif)
 
 ## Usage
 
@@ -83,6 +82,9 @@ Debugging via Run Configurations is no longer supported due to reliability issue
 process list, allowing you to attach the local PyDev debugger.
 
 ![MayaReCharm Attach Dialog](docs/mc_attach_to_proc.png)
+
+After attaching, **breakpoints** can be added to documents. They are supported when using both **Execute Selection** and
+**Execute Document**.
 
 ### Logging
 

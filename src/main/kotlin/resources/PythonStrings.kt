@@ -7,7 +7,7 @@ enum class PythonStrings(val message: String) {
     OPEN_LOG(PythonStrings::class.java.classLoader.getResource("python/open_log.py")?.readText()?: ""),
 
     // no clue why the maya.cmds part is needed, but it works and prevents things from getting executing twice
-    EXECFILE("python(\"exec(compile(open(\\\"{0}\\\", encoding=\\\"utf-8\\\").read(), \\\"{0}\\\", \\\"exec\\\"))\")"),
+    EXECFILE("python(\"exec(compile(open(\\\"{0}\\\", encoding=\\\"utf-8\\\").read(), \\\"{1}\\\", \\\"exec\\\"))\")"),
     STOPTRACE("import pydevd; pydevd.stoptrace()"),
     CMDPORTSETUPSCRIPT("python/command_port_setup.py");
 
