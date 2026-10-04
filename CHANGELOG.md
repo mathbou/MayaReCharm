@@ -1,5 +1,9 @@
 # MayaReCharm
 
+## [5.5.0] - 2026-10-04
+### Added
+- New action: Quick-send project Python files to a selected Maya interpreter from a searchable popup, with per-project favorites and usage-based ordering
+
 ## [5.4.0] - 2026-10-03
 ### Fixed
 - Breakpoints now map to the original source file when executing a selection
@@ -170,6 +174,7 @@
 - Better support for multiple Maya installs
 - Removed dependencies on PyCharm Professional's remote debugger as well as PyCharm Professional
 
+[5.5.0]: https://github.com/mathbou/MayaReCharm/releases/tag/v5.5.0
 [5.4.0]: https://github.com/mathbou/MayaReCharm/releases/tag/v5.4.0
 [5.3.0]: https://github.com/mathbou/MayaReCharm/releases/tag/v5.3.0
 [5.2.2]: https://github.com/mathbou/MayaReCharm/releases/tag/v5.2.2

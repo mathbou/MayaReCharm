@@ -7,8 +7,8 @@
 [![](https://badgen.net/badge/license/MIT/grey)](https://opensource.org/license/mit)
 
 <!-- Plugin description -->
-Maya integration for PyCharm. MayaReCharm lets you execute the current document or arbitrary code directly in Maya, and
-allows attaching the PyDev debugger to a running Maya instance.
+Maya integration for PyCharm. MayaReCharm lets you execute the current document, select and execute project Python files,
+or send arbitrary code directly to Maya, and allows attaching the PyDev debugger to a running Maya instance.
 <!-- Plugin description end -->
 
 > [!NOTE]
@@ -70,10 +70,13 @@ explained [here](https://help.autodesk.com/view/MAYAUL/2027/ENU/?guid=GUID-D457D
 
 ### Actions
 
-MayaReCharm provides two main actions in the `Run` menu, which can also be accessed via keyboard shortcuts:
+MayaReCharm provides three main actions in the `Run` menu, which can also be accessed via keyboard shortcuts:
 
-- **Execute Document (`Alt+A`):** Sends the entire current file to Maya.
-- **Execute Selection (`Alt+S`):** Sends only the selected code to Maya.
+- **Execute Document (<kbd>Alt+A</kbd>):** Sends the entire current file to Maya.
+- **Execute Selection (<kbd>Alt+S</kbd>):** Sends only the selected code to Maya.
+- **Quick Execute File (<kbd>Alt+Shift+A</kbd>):** Popup menu to send any python project files to Maya from anywhere.
+  - Files are sorted in the most frequently used order. Favorite system with ⭐ button, those files stay at the top.
+  - Default Maya interpreter is the same as the global one. It can be overridden using the bottom picker menu or using <kbd>Tab</kbd>. ![MayaRecharmPopupDemo.gif](docs/MayaRecharmPopupDemo.gif)
 
 ### Debugging
 

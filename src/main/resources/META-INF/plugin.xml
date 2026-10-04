@@ -46,6 +46,13 @@
             <keyboard-shortcut keymap="$default" first-keystroke="alt S"/>
         </action>
 
+        <action id="actions.QuickSendFileAction"
+                class="actions.QuickSendFileAction"
+                icon="/icons/MayaReCharm_Action.png">
+            <add-to-group group-id="RunMenu" anchor="last"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="alt shift A"/>
+        </action>
+
     </actions>
 
 </idea-plugin>
