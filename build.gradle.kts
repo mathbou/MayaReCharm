@@ -36,6 +36,8 @@ dependencies {
         pluginVerifier()
 
         compatiblePlugin(providers.gradleProperty("platformPlugins"))
+        bundledModule("com.intellij.modules.xdebugger")
+        bundledModule("intellij.platform.debugger")
     }
 }
 

@@ -6,7 +6,6 @@ import com.intellij.openapi.util.IconLoader
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.UserDataHolder
 import com.intellij.xdebugger.attach.*
-import com.jetbrains.python.sdk.PythonSdkType
 import settings.ApplicationSettings
 import utils.pathForPid
 import javax.swing.Icon
@@ -41,7 +40,7 @@ class MayaAttachDebuggerProvider : XAttachDebuggerProvider {
 
 private class MayaAttachDebugger(private val mayaSdk: ApplicationSettings.SdkInfo) : XAttachDebugger {
     private val mySdkHome: String? = mayaSdk.sdk.homePath
-    private val myName: String = "${PythonSdkType.getInstance().getVersionString(mayaSdk.sdk)} ($mySdkHome)"
+    private val myName: String = "${mayaSdk.sdk.versionString} ($mySdkHome)"
 
     override fun getDebuggerDisplayName(): String {
         return myName
