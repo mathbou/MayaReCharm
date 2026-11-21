@@ -137,14 +137,14 @@ class MayaSdkAddDialog(private val project: Project) : DialogWrapper(project, fa
         val sdkType = PythonSdkType.getInstance()
         val allSdks = ProjectJdkTable.getInstance().allJdks.toList()
 
-        // Note: PythonSdkAdditionalData no longer exposes a stable public, non-internal constructor
-        // that carries a custom PythonSdkFlavor in 2026.2 (all such constructors are either
-        // @ApiStatus.Internal, deprecated-for-removal, or unresolved depending on the exact target
-        // IDE build). See buildMayaSdkAdditionalData() for the reflection-based workaround that keeps
-        // this verifier-clean while preserving Maya's icon/name identity.
-        val additionalData = buildMayaSdkAdditionalData(project.basePath?.let(Path::of))
+        val projectPath = project.basePath?.takeIf { it.isNotBlank() }
+        if (projectPath == null) {
+            setErrorText(Loc.message("mayarecharm.sdkadd.ProjectPathUnavailable"), pathField)
+            return
+        }
 
         createdSdk = try {
+            val additionalData = buildMayaSdkAdditionalData(Path.of(projectPath))
             val sdk = SdkConfigurationUtil.createSdk(
                 allSdks,
                 path,

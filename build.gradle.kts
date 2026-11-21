@@ -30,12 +30,15 @@ repositories {
 }
 
 dependencies {
+    testImplementation("junit:junit:4.13.2")
+
     intellijPlatform {
         intellijIdea(platformVersion)
 
         pluginVerifier()
 
         compatiblePlugin(providers.gradleProperty("platformPlugins"))
+        testFramework(org.jetbrains.intellij.platform.gradle.TestFrameworkType.Platform)
         bundledModule("com.intellij.modules.xdebugger")
         bundledModule("intellij.platform.debugger")
     }

@@ -107,7 +107,7 @@ class LogWindow : ToolWindowFactory, DumbAware {
     ): Pair<Content, LogConsole> {
         val port = sdkInfo.port
         val year = INSTANCE.getYear(sdkPath) ?: "-"
-        val console = createConsole(project, port)
+        val console = createConsole(project, port, sdkPath)
         val content = ContentFactory.getInstance().createContent(console.component, "Maya $year ($port)", false)
         content.putUserData(sdkPathKey, sdkPath)
         contentManager.addContent(content)
@@ -151,12 +151,13 @@ class LogWindow : ToolWindowFactory, DumbAware {
             ?.takeIf { it in openSdkPaths }
     }
 
-    private fun createConsole(project: Project, port: Int): LogConsole {
+    private fun createConsole(project: Project, port: Int, sdkPath: String): LogConsole {
         val mayaLogPath = File(System.getProperty("java.io.tmpdir"), String.format(LOG_FILENAME_STRING, port))
         return LogConsole(
             project,
             mayaLogPath,
             port,
+            sdkPath,
             Charset.defaultCharset(),
             0L,
             "MayaLog",

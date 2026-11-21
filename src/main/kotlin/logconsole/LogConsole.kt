@@ -287,21 +287,22 @@ class SendBufferLogAction(
 
 
 class LogConsole(
-    project: Project,
+    private val consoleProject: Project,
     private val file: File,
     private val port: Int,
+    private val sdkPath: String,
     private val charset: Charset,
     skippedContents: Long,
     title: String,
     buildInActions: Boolean,
     searchScope: GlobalSearchScope?
 ) : LogConsoleBase(
-    project,
+    consoleProject,
     getReader(file, charset, skippedContents),
     title,
     buildInActions,
-    MayaLogFilterModel(project, port.toString()),
-    searchScope ?: GlobalSearchScope.allScope(project)
+    MayaLogFilterModel(consoleProject, port.toString()),
+    searchScope ?: GlobalSearchScope.allScope(consoleProject)
 ) {
 
     private val path = file.absolutePath
@@ -419,6 +420,7 @@ class LogConsole(
 
         group.addAction(SendBufferLogAction(port), Constraints.FIRST)
         group.addAction(ConnectToMayaLogAction(this, port))
+        group.addAction(SelectLogInterpreterAction(consoleProject, sdkPath))
         group.addSeparator()
 
         val superGroup = super.getOrCreateActions() as DefaultActionGroup

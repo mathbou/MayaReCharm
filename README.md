@@ -59,6 +59,10 @@ Once configured, `mayapy` interpreters are available as Python Interpreter. Sele
 interpreter selector in the IDE so you can enjoy proper syntax highlighting and code completion for Maya's Python API.
 This also determines to which Maya instance `Execute Actions` will send the code.
 
+> [!WARNING]
+> Since PyCharm 2026.3, Maya interpreters may not appear in the new interpreter widget. Select one in Python interpreter
+> settings or use the MayaLog tab's `Set Maya #### as Current Interpreter` toolbar button described below.
+
 ![MayaReCharm_select_interpreter.jpg](docs/MayaReCharm_select_interpreter.png)
 
 Maya interpreters can also be used in `Run Configurations`. The script will be executed by a new standalone `mayapy`
@@ -110,3 +114,6 @@ If the connection is successful, you'll see the message `PyCharm logger initiali
 the console (`INFO` level) and in the Maya script editor.
 If nothing happens, try closing the tab and reopening it, or check the log level filter to ensure `INFO` level messages
 are visible.
+
+The ![remoteInterpreter.svg](docs/remoteInterpreter.svg) button sets the current tab's Maya interpreter as the project
+Python interpreter.
