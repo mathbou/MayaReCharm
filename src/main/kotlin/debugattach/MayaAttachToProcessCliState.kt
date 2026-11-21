@@ -2,12 +2,14 @@ package debugattach
 
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.executors.DefaultDebugExecutor
+import com.intellij.execution.ExecutionResult
 import com.intellij.execution.process.ProcessHandler
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.runners.ExecutionEnvironmentBuilder
 import com.intellij.openapi.project.Project
 import com.jetbrains.python.PythonHelper
 import com.jetbrains.python.debugger.attach.PyAttachToProcessCommandLineState
+import com.jetbrains.python.run.CommandLinePatcher
 import com.jetbrains.python.run.PythonConfigurationType
 import com.jetbrains.python.run.PythonRunConfiguration
 import com.jetbrains.python.run.PythonScriptCommandLineState
@@ -18,6 +20,8 @@ import java.nio.file.Paths
 
 class MayaAttachToProcessCliState(runConfig: PythonRunConfiguration, env: ExecutionEnvironment) :
     PythonScriptCommandLineState(runConfig, env) {
+    fun startAttachHelper(): ExecutionResult = execute(environment.executor, *emptyArray<CommandLinePatcher>())
+
     companion object {
         fun create(project: Project, port: Int, pid: Int, mayaSdk: ApplicationSettings.SdkInfo): MayaAttachToProcessCliState {
             val conf =

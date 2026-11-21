@@ -1,5 +1,11 @@
 # MayaReCharm
 
+## [Unreleased]
+
+### Fixed
+- Fix debugger attachment timing out in PyCharm 2026.3 because the attach helper was not started
+- Fix debugger attachment failing when saving documents in PyCharm 2026.3
+
 ## [5.5.0] - 2026-10-04
 ### Added
 - New action: Quick-send project Python files to a selected Maya interpreter from a searchable popup, with per-project favorites and usage-based ordering

@@ -1,6 +1,7 @@
 package debugattach
 
 import MayaBundle as Loc
+import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
@@ -23,7 +24,7 @@ class MayaAttachToProcessDebugRunner(
 ) : PyAttachToProcessDebugRunner(project, pid, mayaSdk.sdk) {
 
     override fun launch(): XDebugSession? {
-        FileDocumentManager.getInstance().saveAllDocuments()
+        saveDocumentsBeforeAttach()
         return launchRemoteDebugServer()
     }
 
@@ -45,7 +46,7 @@ class MayaAttachToProcessDebugRunner(
     private fun launchRemoteDebugServer(): XDebugSession? {
         val serverSocket = getDebuggerSocket() ?: return null
         val state = MayaAttachToProcessCliState.create(project, serverSocket.localPort, pid, mayaSdk)
-        val result = state.execute(state.environment.executor, this)
+        val result = state.startAttachHelper()
 
         val icon = IconLoader.getIcon("/icons/MayaReCharm_ToolWindow.png", this::class.java)
 
@@ -70,4 +71,8 @@ class MayaAttachToProcessDebugRunner(
             .startSession()
             .session
     }
+}
+
+internal fun saveDocumentsBeforeAttach() {
+    WriteAction.run<RuntimeException> { FileDocumentManager.getInstance().saveAllDocuments() }
 }
