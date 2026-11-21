@@ -2,9 +2,21 @@
 
 ## [Unreleased]
 
+## [6.0.0] - 2026-11-21
+### Added
+- Select a Maya log tab's interpreter for the project from the log console toolbar
+
+### Changed
+- Updated the build target to PyCharm 2026.3; earlier IDE versions are no longer supported
+- Upgraded Gradle to 9.9.1 and the IntelliJ Platform Gradle plugin to 2.20.1
+- Create Maya SDK metadata using the public Python SDK API instead of reflection
+
 ### Fixed
 - Fix debugger attachment timing out in PyCharm 2026.3 because the attach helper was not started
 - Fix debugger attachment failing when saving documents in PyCharm 2026.3
+
+### Known issues
+- Maya interpreters may be missing from the new PyCharm 2026.3 interpreter widget; select them in interpreter settings or from the MayaLog toolbar instead
 
 ## [5.5.0] - 2026-10-04
 ### Added
@@ -180,6 +192,7 @@
 - Better support for multiple Maya installs
 - Removed dependencies on PyCharm Professional's remote debugger as well as PyCharm Professional
 
+[6.0.0]: https://github.com/mathbou/MayaReCharm/releases/tag/v6.0.0
 [5.5.0]: https://github.com/mathbou/MayaReCharm/releases/tag/v5.5.0
 [5.4.0]: https://github.com/mathbou/MayaReCharm/releases/tag/v5.4.0
 [5.3.0]: https://github.com/mathbou/MayaReCharm/releases/tag/v5.3.0
